@@ -2,6 +2,8 @@
 
 ![](./docs/docker_ffmpeg.png)
 
+![License: MIT](docs/license_badge.svg)
+
 > Docker Alpine image with FFmpeg and its dependencies.
 
 ![](./docs/alpine_linux_logo.svg)
