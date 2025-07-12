@@ -122,6 +122,22 @@ Ensure your repository has:
 - Package write permissions for workflows
 - Proper secrets configuration (GITHUB_TOKEN is automatic)
 
+### Docker Hub Configuration
+
+To enable Docker Hub deployment, you need to add these secrets to your GitHub repository:
+
+1. Go to Settings → Secrets and variables → Actions
+2. Add the following secrets:
+   - `DOCKERHUB_USERNAME`: Your Docker Hub username
+   - `DOCKERHUB_TOKEN`: Your Docker Hub access token (not password)
+
+To create a Docker Hub access token:
+1. Log in to Docker Hub
+2. Go to Account Settings → Security
+3. Click "New Access Token"
+4. Give it a descriptive name (e.g., "GitHub Actions")
+5. Copy the token and add it as `DOCKERHUB_TOKEN` secret
+
 ## Manual Release (if needed)
 
 If automation fails, you can create a release manually:
