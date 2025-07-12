@@ -1,6 +1,6 @@
 # docker-ffmpeg
 
-![](./docs/docker_ffmpeg.svg)
+![](./docs/docker_ffmpeg.png)
 
 > Docker Alpine image with FFmpeg and its dependencies.
 
