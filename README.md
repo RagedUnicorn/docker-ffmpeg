@@ -2,8 +2,8 @@
 
 ![](./docs/docker_ffmpeg.png)
 
-[![Dev Build](https://github.com/RagedUnicorn/docker-ffmpeg/actions/workflows/docker_publish.yml/badge.svg?branch=master)](https://github.com/RagedUnicorn/docker-ffmpeg/actions/workflows/docker_publish.yml)
-[![Release Build](https://github.com/RagedUnicorn/docker-ffmpeg/actions/workflows/docker_publish.yml/badge.svg?event=tag)](https://github.com/RagedUnicorn/docker-ffmpeg/actions/workflows/docker_publish.yml)
+[![Dev Build](https://github.com/RagedUnicorn/docker-ffmpeg/actions/workflows/docker_dev.yml/badge.svg)](https://github.com/RagedUnicorn/docker-ffmpeg/actions/workflows/docker_dev.yml)
+[![Release Build](https://github.com/RagedUnicorn/docker-ffmpeg/actions/workflows/docker_release.yml/badge.svg)](https://github.com/RagedUnicorn/docker-ffmpeg/actions/workflows/docker_release.yml)
 ![License: MIT](docs/license_badge.svg)
 
 > Docker Alpine image with FFmpeg and its dependencies.
