@@ -2,6 +2,8 @@
 
 ![](./docs/docker_ffmpeg.png)
 
+[![Dev Build](https://github.com/RagedUnicorn/docker-ffmpeg/actions/workflows/docker_publish.yml/badge.svg?branch=master)](https://github.com/RagedUnicorn/docker-ffmpeg/actions/workflows/docker_publish.yml)
+[![Release Build](https://github.com/RagedUnicorn/docker-ffmpeg/actions/workflows/docker_publish.yml/badge.svg?event=tag)](https://github.com/RagedUnicorn/docker-ffmpeg/actions/workflows/docker_publish.yml)
 ![License: MIT](docs/license_badge.svg)
 
 > Docker Alpine image with FFmpeg and its dependencies.
@@ -23,7 +25,7 @@ This Docker image provides a lightweight FFmpeg installation built from source o
 ## Building the Image
 
 ```bash
-docker build -t ffmpeg-alpine .
+docker build -t docker-ffmpeg .
 ```
 
 ## Usage
