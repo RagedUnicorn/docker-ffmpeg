@@ -55,14 +55,14 @@ After pushing the tag, GitHub Actions will:
 
 When you create a release `v1.2.3`, the following Docker tags are created:
 
-- `ghcr.io/ragedunicorn/ffmpeg:1.2.3` (exact version)
-- `ghcr.io/ragedunicorn/ffmpeg:latest` (latest stable release)
+- `ghcr.io/ragedunicorn/docker-ffmpeg/ffmpeg:1.2.3` (exact version)
+- `ghcr.io/ragedunicorn/docker-ffmpeg/ffmpeg:latest` (latest stable release)
 
 For development builds (pushes to main/master):
-- `ghcr.io/ragedunicorn/ffmpeg:dev-main-abc1234` (branch + commit SHA)
+- `ghcr.io/ragedunicorn/docker-ffmpeg/ffmpeg:dev-main-abc1234` (branch + commit SHA)
 
 For pull requests:
-- `ghcr.io/ragedunicorn/ffmpeg:pr-123` (PR number)
+- `ghcr.io/ragedunicorn/docker-ffmpeg/ffmpeg:pr-123` (PR number)
 
 ## Best Practices
 
@@ -148,5 +148,5 @@ If automation fails, you can create a release manually:
 4. Add release notes
 5. Include Docker pull commands:
    ```
-   docker pull ghcr.io/ragedunicorn/ffmpeg:version
+   docker pull ghcr.io/ragedunicorn/docker-ffmpeg/ffmpeg:version
    ```
