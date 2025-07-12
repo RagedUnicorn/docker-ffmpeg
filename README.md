@@ -25,7 +25,7 @@ This Docker image provides a lightweight FFmpeg installation built from source o
 ## Building the Image
 
 ```bash
-docker build -t docker-ffmpeg .
+docker build -t ffmpeg .
 ```
 
 ## Usage
