@@ -62,23 +62,24 @@ docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:latest \
 
 ## Tags
 
-This image uses a structured versioning scheme that includes all component versions:
+This image uses semantic versioning that includes all component versions:
 
 **Format:** `{ffmpeg_version}-alpine{alpine_version}-{build_number}`
 
 ### Available Tags
 
 - `latest` - Most recent stable build
-- `7.1.1` - Latest build with FFmpeg 7.1.1 (any Alpine version)
-- `7.1.1-alpine3.22.0-1` - Specific build with exact versions
-- `dev-main-abc1234` - Development builds
+- `7.1.1-alpine3.22.0-1` - Specific version with FFmpeg 7.1.1, Alpine 3.22.0, build 1
+- `dev-main-abc1234` - Development builds from main branch
 
-### Tag Examples
+### Version Examples
 
-- `7.1.1-alpine3.22.0-1` - FFmpeg 7.1.1, Alpine 3.22.0, build 1
-- `7.1.1-alpine3.22.0-2` - Same versions, rebuild (e.g., for security patches)
-- `7.1.1-alpine3.22.1-1` - Alpine patch update, build number resets
-- `7.1.2-alpine3.22.0-1` - FFmpeg update, build number resets
+- `7.1.1-alpine3.22.0-1` - Initial release with FFmpeg 7.1.1 and Alpine 3.22.0
+- `7.1.1-alpine3.22.0-2` - Rebuild of same versions (bug fixes, security patches)
+- `7.1.1-alpine3.22.1-1` - Alpine Linux patch update
+- `7.1.2-alpine3.22.0-1` - FFmpeg version update
+
+When updates are available through automated dependency management, new releases are created with appropriate version tags.
 
 ## Links
 

@@ -1,6 +1,0 @@
-{
-  "ffmpeg_version": "7.1.1",
-  "alpine_version": "3.22.0",
-  "build_number": 1,
-  "last_tag": "7.1.1-alpine3.22.0-1"
-}

@@ -42,11 +42,13 @@ jobs:
             echo "Pull the image:"
             echo '```bash'
             echo "docker pull ghcr.io/${{ github.repository }}:${GITHUB_REF_NAME#v}"
+            echo "docker pull ${{ secrets.DOCKERHUB_USERNAME }}/ffmpeg:${GITHUB_REF_NAME#v}"
             echo '```'
             echo ""
             echo "Or use the latest tag:"
             echo '```bash'
             echo "docker pull ghcr.io/${{ github.repository }}:latest"
+            echo "docker pull ${{ secrets.DOCKERHUB_USERNAME }}/ffmpeg:latest"
             echo '```'
             echo ""
             echo "**Full Changelog**: https://github.com/${{ github.repository }}/compare/${{ steps.prev_tag.outputs.previous_tag }}...${{ github.ref_name }}"

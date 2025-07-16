@@ -100,20 +100,27 @@ docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:latest -i input.mp4 -vf "f
 
 ## Versioning
 
-This project uses a structured versioning scheme that includes all component versions:
+This project uses semantic versioning that matches the Docker image contents:
 
-**Format:** `{ffmpeg_version}-alpine{alpine_version}-{build_number}`
+**Git Tag Format:** `v{ffmpeg_version}-alpine{alpine_version}-{build_number}`
+**Docker Tag Format:** `{ffmpeg_version}-alpine{alpine_version}-{build_number}` (without 'v' prefix)
 
 **Examples:**
-- `7.1.1-alpine3.22.0-1` - FFmpeg 7.1.1, Alpine 3.22.0, build 1
-- `7.1.1-alpine3.22.0-2` - Same versions, rebuild (e.g., for security patches)
-- `7.1.1-alpine3.22.1-1` - Alpine patch update, build number resets
-- `7.1.2-alpine3.22.0-1` - FFmpeg update, build number resets
+- Git tag: `v7.1.1-alpine3.22.0-1` → Docker tag: `7.1.1-alpine3.22.0-1`
+- Git tag: `v7.1.1-alpine3.22.0-2` → Docker tag: `7.1.1-alpine3.22.0-2` (rebuild)
+- Git tag: `v7.1.1-alpine3.22.1-1` → Docker tag: `7.1.1-alpine3.22.1-1` (Alpine update)
+- Git tag: `v7.1.2-alpine3.22.0-1` → Docker tag: `7.1.2-alpine3.22.0-1` (FFmpeg update)
 
-**Available Tags:**
-- `latest` - Most recent stable build
-- `7.1.1` - Latest build with FFmpeg 7.1.1 (any Alpine version)
-- `7.1.1-alpine3.22.0-1` - Specific build with exact versions
+**Creating a Release:**
+```bash
+git tag v7.1.1-alpine3.22.0-1
+git push origin v7.1.1-alpine3.22.0-1
+```
+
+This will automatically:
+- Build and push Docker images with the corresponding tags
+- Create a GitHub release
+- Tag images on both GitHub Container Registry and Docker Hub
 
 ## Automated Dependency Updates
 

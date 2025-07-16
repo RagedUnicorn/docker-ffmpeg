@@ -13,7 +13,7 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
       packages: write
     steps:
       - name: Checkout repository
@@ -31,10 +31,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Generate version tag
-        id: version
-        run: |
-          ./scripts/version-manager.sh
       - name: Extract metadata
         id: meta
         uses: docker/metadata-action@v5
@@ -43,10 +39,10 @@ jobs:
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
             ${{ secrets.DOCKERHUB_USERNAME }}/ffmpeg
           tags: |
-            # Generated versioned tag (e.g., 7.1.1-alpine3.22.0-1)
-            type=raw,value=${{ steps.version.outputs.tag }}
-            # FFmpeg version tag (e.g., 7.1.1)
-            type=raw,value=${{ steps.version.outputs.ffmpeg_version }}
+            # Strip 'v' prefix from git tag for Docker tag
+            type=semver,pattern={{version}}
+            # Also create FFmpeg version tag if git tag matches pattern
+            type=semver,pattern={{major}}.{{minor}}.{{patch}},enable=${{ contains(github.ref_name, 'alpine') }}
             # 'latest' tag for version tags
             type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/v') }}
           labels: |
@@ -66,13 +62,4 @@ jobs:
           build-args: |
             BUILD_DATE=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}
             VCS_REF=${{ github.sha }}
-            VERSION=${{ steps.version.outputs.tag }}
-            FFMPEG_VERSION=${{ steps.version.outputs.ffmpeg_version }}
-            ALPINE_VERSION=${{ steps.version.outputs.alpine_version }}
-      - name: Commit version update
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add .version.json
-          git diff --staged --quiet || git commit -m "chore: Update version to ${{ steps.version.outputs.tag }}"
-          git push origin HEAD:master || echo "Version file already up to date"
+            VERSION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
