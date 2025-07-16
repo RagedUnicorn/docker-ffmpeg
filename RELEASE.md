@@ -51,6 +51,20 @@ Create a new release when:
 - **Reset to 1**: When FFmpeg or Alpine version changes
 - **Increment**: When rebuilding with the same versions (fixes, optimizations)
 
+## Post-Release Tasks
+
+### Update Docker Hub Documentation
+
+After creating a release, manually update the Docker Hub repository description:
+
+1. Go to [Docker Hub](https://hub.docker.com/r/ragedunicorn/ffmpeg)
+2. Click "Manage Repository" → "Description"
+3. Copy the contents of `DOCKERHUB.md`
+4. Update any version numbers in the examples to match the latest release
+5. Save the changes
+
+**Note**: The `DOCKERHUB.md` file is maintained in the repository as the source of truth for Docker Hub documentation.
+
 ## Best Practices
 
 ### Commit Messages

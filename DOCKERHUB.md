@@ -10,10 +10,7 @@ A lightweight FFmpeg build on Alpine Linux with extensive codec support for vers
 # Pull latest version
 docker pull ragedunicorn/ffmpeg:latest
 
-# Or pull specific FFmpeg version
-docker pull ragedunicorn/ffmpeg:7.1.1
-
-# Or pull exact version combination
+# Or pull specific version
 docker pull ragedunicorn/ffmpeg:7.1.1-alpine3.22.0-1
 
 # Run FFmpeg
@@ -70,7 +67,6 @@ This image uses semantic versioning that includes all component versions:
 
 - `latest` - Most recent stable build
 - `7.1.1-alpine3.22.0-1` - Specific version with FFmpeg 7.1.1, Alpine 3.22.0, build 1
-- `dev-main-abc1234` - Development builds from main branch
 
 ### Version Examples
 
