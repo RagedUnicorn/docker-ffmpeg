@@ -92,6 +92,15 @@ docker run -v $(pwd):/tmp/workdir ffmpeg-alpine -i input.mp4 -vf "fps=10,scale=3
 - RTMP streaming (librtmp)
 - SSL/TLS support (openssl)
 
+## Automated Dependency Updates
+
+This project uses [Renovate](https://docs.renovatebot.com/) to automatically check for updates to:
+- Alpine Linux base image version (all major, minor, and patch updates)
+- FFmpeg version
+
+Renovate runs weekly (every Monday) and creates pull requests when updates are available. The configuration tracks 
+both Alpine Linux and FFmpeg releases, creating separate pull requests for each update.
+
 # License
 
 MIT License

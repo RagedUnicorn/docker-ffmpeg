@@ -1,0 +1,29 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "schedule": [
+    "every monday"
+  ],
+  "timezone": "UTC",
+  "docker": {
+    "pinDigests": false
+  },
+  "regexManagers": [
+    {
+      "fileMatch": ["^Dockerfile$"],
+      "matchStrings": [
+        "ARG FFMPEG_VERSION=(?<currentValue>.*?)\\n"
+      ],
+      "depNameTemplate": "FFmpeg/FFmpeg",
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^n(?<version>.*)$"
+    }
+  ],
+  "labels": ["dependencies", "renovate"],
+  "commitMessagePrefix": "chore(deps):",
+  "prConcurrentLimit": 2,
+  "prCreation": "immediate",
+  "automerge": false
+}
