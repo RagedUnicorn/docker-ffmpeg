@@ -4,15 +4,15 @@
     "config:recommended"
   ],
   "schedule": [
-    "every monday"
+    "on monday"
   ],
   "timezone": "UTC",
-  "docker": {
-    "pinDigests": false
-  },
-  "regexManagers": [
+  "customManagers": [
     {
-      "fileMatch": ["^Dockerfile$"],
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^Dockerfile$/"
+      ],
       "matchStrings": [
         "ARG FFMPEG_VERSION=(?<currentValue>.*?)\\n"
       ],
@@ -21,9 +21,20 @@
       "extractVersionTemplate": "^n(?<version>.*)$"
     }
   ],
-  "labels": ["dependencies", "renovate"],
+  "labels": [
+    "dependencies",
+    "renovate"
+  ],
   "commitMessagePrefix": "chore(deps):",
   "prConcurrentLimit": 2,
   "prCreation": "immediate",
-  "automerge": false
+  "automerge": false,
+  "packageRules": [
+    {
+      "matchCategories": [
+        "docker"
+      ],
+      "pinDigests": false
+    }
+  ]
 }
