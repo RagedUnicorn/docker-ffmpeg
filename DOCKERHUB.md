@@ -7,8 +7,17 @@ A lightweight FFmpeg build on Alpine Linux with extensive codec support for vers
 ## Quick Start
 
 ```bash
-docker pull ragedunicorn/ffmpeg
-docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg -i input.mp4 output.mp4
+# Pull latest version
+docker pull ragedunicorn/ffmpeg:latest
+
+# Or pull specific FFmpeg version
+docker pull ragedunicorn/ffmpeg:7.1.1
+
+# Or pull exact version combination
+docker pull ragedunicorn/ffmpeg:7.1.1-alpine3.22.0-1
+
+# Run FFmpeg
+docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:latest -i input.mp4 output.mp4
 ```
 
 ## Features
@@ -29,33 +38,47 @@ docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg -i input.mp4 output.mp4
 
 ### Convert video format
 ```bash
-docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg \
+docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:latest \
   -i input.mp4 -c:v libx264 -c:a aac output.mp4
 ```
 
 ### Extract audio
 ```bash
-docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg \
+docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:latest \
   -i input.mp4 -vn -acodec mp3 output.mp3
 ```
 
 ### Resize video
 ```bash
-docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg \
+docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:latest \
   -i input.mp4 -vf scale=1280:720 output.mp4
 ```
 
 ### Create GIF from video
 ```bash
-docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg \
+docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:latest \
   -i input.mp4 -vf "fps=10,scale=320:-1" output.gif
 ```
 
 ## Tags
 
-- `latest` - Latest stable release
-- `1.0.0` - Specific version (example)
+This image uses a structured versioning scheme that includes all component versions:
+
+**Format:** `{ffmpeg_version}-alpine{alpine_version}-{build_number}`
+
+### Available Tags
+
+- `latest` - Most recent stable build
+- `7.1.1` - Latest build with FFmpeg 7.1.1 (any Alpine version)
+- `7.1.1-alpine3.22.0-1` - Specific build with exact versions
 - `dev-main-abc1234` - Development builds
+
+### Tag Examples
+
+- `7.1.1-alpine3.22.0-1` - FFmpeg 7.1.1, Alpine 3.22.0, build 1
+- `7.1.1-alpine3.22.0-2` - Same versions, rebuild (e.g., for security patches)
+- `7.1.1-alpine3.22.1-1` - Alpine patch update, build number resets
+- `7.1.2-alpine3.22.0-1` - FFmpeg update, build number resets
 
 ## Links
 

@@ -25,7 +25,7 @@ This Docker image provides a lightweight FFmpeg installation built from source o
 ## Building the Image
 
 ```bash
-docker build -t ffmpeg .
+docker build -t ragedunicorn/ffmpeg .
 ```
 
 ## Usage
@@ -35,40 +35,46 @@ The container uses FFmpeg as the entrypoint, so any FFmpeg parameters can be pas
 ### Basic Usage
 
 ```bash
-# Mount current directory and process files
-docker run -v $(pwd):/tmp/workdir ffmpeg-alpine [ffmpeg-options]
+# Using latest version
+docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:latest [ffmpeg-options]
+
+# Using specific FFmpeg version (latest Alpine build)
+docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:7.1.1 [ffmpeg-options]
+
+# Using exact version combination
+docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:7.1.1-alpine3.22.0-1 [ffmpeg-options]
 ```
 
 ### Examples
 
 #### Convert Video Format
 ```bash
-docker run -v $(pwd):/tmp/workdir ffmpeg-alpine -i input.mp4 -c:v libx264 -c:a aac output.mp4
+docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:latest -i input.mp4 -c:v libx264 -c:a aac output.mp4
 ```
 
 #### Get Video Information
 ```bash
-docker run -v $(pwd):/tmp/workdir ffmpeg-alpine -i input.mp4
+docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:latest -i input.mp4
 ```
 
 #### Extract Audio
 ```bash
-docker run -v $(pwd):/tmp/workdir ffmpeg-alpine -i input.mp4 -vn -acodec mp3 output.mp3
+docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:latest -i input.mp4 -vn -acodec mp3 output.mp3
 ```
 
 #### Resize Video
 ```bash
-docker run -v $(pwd):/tmp/workdir ffmpeg-alpine -i input.mp4 -vf scale=1280:720 output.mp4
+docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:latest -i input.mp4 -vf scale=1280:720 output.mp4
 ```
 
 #### Convert to WebM
 ```bash
-docker run -v $(pwd):/tmp/workdir ffmpeg-alpine -i input.mp4 -c:v libvpx -c:a libvorbis output.webm
+docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:latest -i input.mp4 -c:v libvpx -c:a libvorbis output.webm
 ```
 
 #### Create GIF from Video
 ```bash
-docker run -v $(pwd):/tmp/workdir ffmpeg-alpine -i input.mp4 -vf "fps=10,scale=320:-1" output.gif
+docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:latest -i input.mp4 -vf "fps=10,scale=320:-1" output.gif
 ```
 
 ## Supported Codecs
@@ -91,6 +97,23 @@ docker run -v $(pwd):/tmp/workdir ffmpeg-alpine -i input.mp4 -vf "fps=10,scale=3
 - WebP support (libwebp)
 - RTMP streaming (librtmp)
 - SSL/TLS support (openssl)
+
+## Versioning
+
+This project uses a structured versioning scheme that includes all component versions:
+
+**Format:** `{ffmpeg_version}-alpine{alpine_version}-{build_number}`
+
+**Examples:**
+- `7.1.1-alpine3.22.0-1` - FFmpeg 7.1.1, Alpine 3.22.0, build 1
+- `7.1.1-alpine3.22.0-2` - Same versions, rebuild (e.g., for security patches)
+- `7.1.1-alpine3.22.1-1` - Alpine patch update, build number resets
+- `7.1.2-alpine3.22.0-1` - FFmpeg update, build number resets
+
+**Available Tags:**
+- `latest` - Most recent stable build
+- `7.1.1` - Latest build with FFmpeg 7.1.1 (any Alpine version)
+- `7.1.1-alpine3.22.0-1` - Specific build with exact versions
 
 ## Automated Dependency Updates
 
