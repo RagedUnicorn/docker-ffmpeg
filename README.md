@@ -2,7 +2,6 @@
 
 ![](./docs/docker_ffmpeg.png)
 
-[![Dev Build](https://github.com/RagedUnicorn/docker-ffmpeg/actions/workflows/docker_dev.yml/badge.svg)](https://github.com/RagedUnicorn/docker-ffmpeg/actions/workflows/docker_dev.yml)
 [![Release Build](https://github.com/RagedUnicorn/docker-ffmpeg/actions/workflows/docker_release.yml/badge.svg)](https://github.com/RagedUnicorn/docker-ffmpeg/actions/workflows/docker_release.yml)
 ![License: MIT](docs/license_badge.svg)
 
