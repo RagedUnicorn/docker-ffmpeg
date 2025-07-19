@@ -61,9 +61,24 @@ Validates:
 ```bash
 # Build the image locally with a test tag
 docker build -t ragedunicorn/ffmpeg:test .
+```
 
+**Linux/macOS:**
+```bash
 # Run tests against your local build
 FFMPEG_VERSION=test docker compose -f docker-compose.test.yml run test-all
+```
+
+**Windows (PowerShell):**
+```powershell
+# Run tests against your local build
+$env:FFMPEG_VERSION="test"; docker compose -f docker-compose.test.yml run test-all
+```
+
+**Windows (Command Prompt):**
+```cmd
+# Run tests against your local build
+set FFMPEG_VERSION=test && docker compose -f docker-compose.test.yml run test-all
 ```
 
 **Why local testing is important:**
@@ -73,27 +88,52 @@ FFMPEG_VERSION=test docker compose -f docker-compose.test.yml run test-all
 - Guarantees consistent test results
 
 **Never pull remote images for testing:**
+
+**❌ DON'T DO THIS - may have different labels/settings:**
 ```bash
-# ❌ DON'T DO THIS - may have different labels/settings
 docker pull ragedunicorn/ffmpeg:latest
 docker compose -f docker-compose.test.yml run test-all
+```
 
-# ✅ DO THIS - test your local build
+**✅ DO THIS - test your local build:**
+
+Linux/macOS:
+```bash
 docker build -t ragedunicorn/ffmpeg:test .
 FFMPEG_VERSION=test docker compose -f docker-compose.test.yml run test-all
+```
+
+Windows (PowerShell):
+```powershell
+docker build -t ragedunicorn/ffmpeg:test .
+$env:FFMPEG_VERSION="test"; docker compose -f docker-compose.test.yml run test-all
 ```
 
 ### Test Execution
 
 Run all tests against your local build:
 
+**Linux/macOS:**
 ```bash
 # Ensure you've built locally first!
 FFMPEG_VERSION=test docker compose -f docker-compose.test.yml run test-all
 ```
 
+**Windows (PowerShell):**
+```powershell
+# Ensure you've built locally first!
+$env:FFMPEG_VERSION="test"; docker compose -f docker-compose.test.yml run test-all
+```
+
+**Windows (Command Prompt):**
+```cmd
+# Ensure you've built locally first!
+set FFMPEG_VERSION=test && docker compose -f docker-compose.test.yml run test-all
+```
+
 Run specific test categories:
 
+**Linux/macOS:**
 ```bash
 # File structure and library tests
 FFMPEG_VERSION=test docker compose -f docker-compose.test.yml up container-test
@@ -105,6 +145,18 @@ FFMPEG_VERSION=test docker compose -f docker-compose.test.yml up container-test-
 FFMPEG_VERSION=test docker compose -f docker-compose.test.yml up container-test-metadata
 ```
 
+**Windows (PowerShell):**
+```powershell
+# File structure and library tests
+$env:FFMPEG_VERSION="test"; docker compose -f docker-compose.test.yml up container-test
+
+# Command execution and codec tests
+$env:FFMPEG_VERSION="test"; docker compose -f docker-compose.test.yml up container-test-command
+
+# Metadata and label tests
+$env:FFMPEG_VERSION="test"; docker compose -f docker-compose.test.yml up container-test-metadata
+```
+
 ### Testing Different Versions
 
 When testing different versions, always build locally first:
@@ -112,9 +164,18 @@ When testing different versions, always build locally first:
 ```bash
 # Build a specific version locally
 docker build -t ragedunicorn/ffmpeg:7.1.1-alpine3.22.1-1 .
+```
 
+**Linux/macOS:**
+```bash
 # Test that specific version
 FFMPEG_VERSION=7.1.1-alpine3.22.1-1 docker compose -f docker-compose.test.yml run test-all
+```
+
+**Windows (PowerShell):**
+```powershell
+# Test that specific version
+$env:FFMPEG_VERSION="7.1.1-alpine3.22.1-1"; docker compose -f docker-compose.test.yml run test-all
 ```
 
 ## Troubleshooting Test Failures
@@ -150,9 +211,19 @@ Then update the paths in `test/ffmpeg_test.yml` accordingly.
    - Build date labels are dynamic
 
 **Solution:** Always build and test locally before pushing:
+
 ```bash
 docker build -t ragedunicorn/ffmpeg:test .
+```
+
+Linux/macOS:
+```bash
 FFMPEG_VERSION=test docker compose -f docker-compose.test.yml run test-all
+```
+
+Windows (PowerShell):
+```powershell
+$env:FFMPEG_VERSION="test"; docker compose -f docker-compose.test.yml run test-all
 ```
 
 ### Permission Errors
