@@ -30,7 +30,7 @@ jobs:
           FFMPEG_VERSION: test
         run: |
           docker pull ragedunicorn/container-test:latest
-          docker-compose -f docker-compose.test.yml run --rm test-all
+          docker compose -f docker-compose.test.yml run --rm test-all
 
   build-and-push:
     needs: test

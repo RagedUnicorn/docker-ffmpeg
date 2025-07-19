@@ -6,12 +6,12 @@ This document describes how to test the FFmpeg Docker image using Container Stru
 
 ```bash
 # Run all tests
-docker-compose -f docker-compose.test.yml run test-all
+docker compose -f docker-compose.test.yml run test-all
 
 # Run individual test suites
-docker-compose -f docker-compose.test.yml up container-test          # File structure tests
-docker-compose -f docker-compose.test.yml up container-test-command  # Command execution tests
-docker-compose -f docker-compose.test.yml up container-test-metadata # Metadata validation tests
+docker compose -f docker-compose.test.yml up container-test          # File structure tests
+docker compose -f docker-compose.test.yml up container-test-command  # Command execution tests
+docker compose -f docker-compose.test.yml up container-test-metadata # Metadata validation tests
 ```
 
 ## Test Structure
@@ -63,20 +63,20 @@ Validates:
 Run all tests sequentially:
 
 ```bash
-docker-compose -f docker-compose.test.yml run test-all
+docker compose -f docker-compose.test.yml run test-all
 ```
 
 Run specific test categories:
 
 ```bash
 # File structure and library tests
-docker-compose -f docker-compose.test.yml up container-test
+docker compose -f docker-compose.test.yml up container-test
 
 # Command execution and codec tests
-docker-compose -f docker-compose.test.yml up container-test-command
+docker compose -f docker-compose.test.yml up container-test-command
 
 # Metadata and label tests
-docker-compose -f docker-compose.test.yml up container-test-metadata
+docker compose -f docker-compose.test.yml up container-test-metadata
 ```
 
 ### Testing Different Versions
@@ -84,7 +84,7 @@ docker-compose -f docker-compose.test.yml up container-test-metadata
 Test a specific version by setting the environment variable:
 
 ```bash
-FFMPEG_VERSION=7.1.1-alpine3.22.1-1 docker-compose -f docker-compose.test.yml run test-all
+FFMPEG_VERSION=7.1.1-alpine3.22.1-1 docker compose -f docker-compose.test.yml run test-all
 ```
 
 ## Troubleshooting Test Failures
@@ -113,7 +113,7 @@ For local testing of metadata, ensure you're testing against images built with t
 If you encounter Docker socket permission errors:
 
 ```bash
-sudo docker-compose -f docker-compose.test.yml run test-all
+sudo docker compose -f docker-compose.test.yml run test-all
 ```
 
 Or ensure your user is in the `docker` group:
@@ -162,7 +162,7 @@ Manual integration example:
 - name: Run Container Structure Tests
   env:
     FFMPEG_VERSION: test
-  run: docker-compose -f docker-compose.test.yml run test-all
+  run: docker compose -f docker-compose.test.yml run test-all
 ```
 
 The `test-all` service returns:

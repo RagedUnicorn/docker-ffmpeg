@@ -40,10 +40,10 @@ The `docker-compose.dev.yml` file provides an interactive development environmen
 
 ```bash
 # Build the image locally
-docker-compose -f docker-compose.dev.yml build
+docker compose -f docker-compose.dev.yml build
 
 # Run in development mode (interactive shell)
-docker-compose -f docker-compose.dev.yml run --rm ffmpeg-dev
+docker compose -f docker-compose.dev.yml run --rm ffmpeg-dev
 
 # Inside the container, you can run ffmpeg manually
 ffmpeg -version
@@ -83,10 +83,10 @@ After making changes, always run the test suite:
 
 ```bash
 # Run all tests
-docker-compose -f docker-compose.test.yml run test-all
+docker compose -f docker-compose.test.yml run test-all
 
 # Run specific tests during development
-docker-compose -f docker-compose.test.yml up container-test-command
+docker compose -f docker-compose.test.yml up container-test-command
 ```
 
 See [TEST.md](TEST.md) for detailed testing information.

@@ -116,9 +116,9 @@ mkdir -p media/input media/output
 
 2. Place your input files in `media/input/`
 
-3. Run FFmpeg using docker-compose:
+3. Run FFmpeg using docker compose:
 ```bash
-docker-compose run --rm ffmpeg -i input/video.mp4 output/converted.mp4
+docker compose run --rm ffmpeg -i input/video.mp4 output/converted.mp4
 ```
 
 ### Example Configurations
@@ -128,46 +128,46 @@ The `examples/` directory contains specialized docker-compose files for common t
 #### Video Conversion (`examples/docker-compose.convert.yml`)
 ```bash
 # Convert MP4 to WebM
-docker-compose -f examples/docker-compose.convert.yml run --rm mp4-to-webm
+docker compose -f examples/docker-compose.convert.yml run --rm mp4-to-webm
 
 # Compress video
-docker-compose -f examples/docker-compose.convert.yml run --rm compress-video
+docker compose -f examples/docker-compose.convert.yml run --rm compress-video
 
 # Convert to H.265
-docker-compose -f examples/docker-compose.convert.yml run --rm convert-to-h265
+docker compose -f examples/docker-compose.convert.yml run --rm convert-to-h265
 ```
 
 #### Media Extraction (`examples/docker-compose.extract.yml`)
 ```bash
 # Extract audio from video
-docker-compose -f examples/docker-compose.extract.yml run --rm extract-audio-mp3
+docker compose -f examples/docker-compose.extract.yml run --rm extract-audio-mp3
 
 # Extract video thumbnails
-docker-compose -f examples/docker-compose.extract.yml run --rm extract-thumbnails
+docker compose -f examples/docker-compose.extract.yml run --rm extract-thumbnails
 
 # Extract specific segment
-START_TIME=00:01:30 DURATION=00:00:45 docker-compose -f examples/docker-compose.extract.yml run --rm extract-segment
+START_TIME=00:01:30 DURATION=00:00:45 docker compose -f examples/docker-compose.extract.yml run --rm extract-segment
 ```
 
 #### Streaming (`examples/docker-compose.stream.yml`)
 ```bash
 # Stream to RTMP server
-RTMP_URL=rtmp://your.server/live/ STREAM_KEY=your_key docker-compose -f examples/docker-compose.stream.yml run --rm rtmp-stream
+RTMP_URL=rtmp://your.server/live/ STREAM_KEY=your_key docker compose -f examples/docker-compose.stream.yml run --rm rtmp-stream
 
 # Create HLS stream
-docker-compose -f examples/docker-compose.stream.yml run --rm hls-stream
+docker compose -f examples/docker-compose.stream.yml run --rm hls-stream
 ```
 
 #### Batch Processing (`examples/docker-compose.batch.yml`)
 ```bash
 # Compress all videos in input directory
-docker-compose -f examples/docker-compose.batch.yml run --rm batch-compress-all
+docker compose -f examples/docker-compose.batch.yml run --rm batch-compress-all
 
 # Generate thumbnails for all videos
-docker-compose -f examples/docker-compose.batch.yml run --rm batch-generate-thumbnails
+docker compose -f examples/docker-compose.batch.yml run --rm batch-generate-thumbnails
 
 # Custom batch processing
-FFMPEG_ARGS="-c:v libx265 -crf 28" docker-compose -f examples/docker-compose.batch.yml run --rm batch-custom
+FFMPEG_ARGS="-c:v libx265 -crf 28" docker compose -f examples/docker-compose.batch.yml run --rm batch-custom
 ```
 
 ### Environment Variables
@@ -185,7 +185,7 @@ Many compose services support environment variables for customization:
 
 1. **Custom Commands**: Override the default command:
    ```bash
-   docker-compose run --rm ffmpeg -i input/video.mp4 -vf scale=640:480 output/small.mp4
+   docker compose run --rm ffmpeg -i input/video.mp4 -vf scale=640:480 output/small.mp4
    ```
 
 2. **Multiple Files**: Use the batch processing configurations for processing multiple files efficiently
