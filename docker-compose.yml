@@ -1,0 +1,50 @@
+# Docker Compose configuration for FFmpeg
+# 
+# Usage:
+#   docker-compose run --rm ffmpeg [ffmpeg-options]
+#
+# Examples:
+#   docker-compose run --rm ffmpeg -i input/video.mp4 -c:v libx264 output/converted.mp4
+#   docker-compose run --rm ffmpeg -i input/audio.wav -c:a mp3 output/audio.mp3
+#
+# The service mounts ./media as the working directory, allowing you to:
+#   - Place input files in ./media/input/
+#   - Find output files in ./media/output/
+#
+# You can override the image version by setting FFMPEG_VERSION environment variable:
+#   FFMPEG_VERSION=7.1.1 docker-compose run --rm ffmpeg [args]
+
+services:
+  ffmpeg:
+    image: ragedunicorn/ffmpeg:${FFMPEG_VERSION:-latest}
+    volumes:
+      # Mount local media directory for input/output files
+      - ./media:/tmp/workdir
+    working_dir: /tmp/workdir
+    # Remove container after execution
+    stdin_open: true
+    tty: true
+    # Network is optional - only needed for streaming
+    network_mode: bridge
+    # Uncomment below to use host networking (useful for RTMP streaming)
+    # network_mode: host
+    
+    # Environment variables (optional)
+    environment:
+      # Add any environment variables if needed
+      - TERM=xterm-256color
+    
+    # Resource limits (optional - uncomment to use)
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: '2'
+    #       memory: 2G
+    #     reservations:
+    #       cpus: '1'
+    #       memory: 1G
+
+# Optional: Define custom networks
+# networks:
+#   default:
+#     driver: bridge

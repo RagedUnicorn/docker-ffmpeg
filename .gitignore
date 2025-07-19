@@ -18,3 +18,21 @@ Thumbs.db
 target/
 .idea/
 *.iml
+
+# Media files
+media/
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.mp3
+*.wav
+*.webm
+
+# Environment files
+.env
+
+# IDE files
+.vscode/
+*.swp
+*.swo

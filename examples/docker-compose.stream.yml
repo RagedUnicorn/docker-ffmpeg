@@ -1,0 +1,182 @@
+# Docker Compose configuration for streaming scenarios
+#
+# Usage examples:
+#   docker-compose -f examples/docker-compose.stream.yml run --rm rtmp-stream
+#   docker-compose -f examples/docker-compose.stream.yml run --rm hls-stream
+#   docker-compose -f examples/docker-compose.stream.yml run --rm webcam-stream
+#
+# Place your input files in ./media/input/
+# For live streaming, ensure you have proper network configuration
+
+services:
+  # Base service configuration with host networking for streaming
+  ffmpeg-stream-base:
+    image: ragedunicorn/ffmpeg:${FFMPEG_VERSION:-latest}
+    volumes:
+      - ../media:/tmp/workdir
+    working_dir: /tmp/workdir
+    stdin_open: true
+    tty: true
+    # Use host networking for better streaming performance
+    network_mode: host
+    # Add device access for webcam streaming
+    devices:
+      - /dev/video0:/dev/video0
+
+  # Stream to RTMP server (e.g., YouTube, Twitch)
+  rtmp-stream:
+    extends:
+      service: ffmpeg-stream-base
+    environment:
+      - RTMP_URL=${RTMP_URL:-rtmp://localhost/live/stream}
+      - STREAM_KEY=${STREAM_KEY:-}
+    command: >
+      -re
+      -i input/video.mp4
+      -c:v libx264
+      -preset veryfast
+      -maxrate 3000k
+      -bufsize 6000k
+      -pix_fmt yuv420p
+      -g 50
+      -c:a aac
+      -b:a 128k
+      -f flv
+      ${RTMP_URL}${STREAM_KEY}
+
+  # Create HLS stream for web playback
+  hls-stream:
+    extends:
+      service: ffmpeg-stream-base
+    command: >
+      -re
+      -i input/video.mp4
+      -c:v libx264
+      -preset fast
+      -crf 22
+      -c:a aac
+      -b:a 128k
+      -f hls
+      -hls_time 4
+      -hls_playlist_type event
+      -hls_segment_filename output/segment_%03d.ts
+      output/playlist.m3u8
+
+  # Stream webcam to RTMP
+  webcam-stream:
+    extends:
+      service: ffmpeg-stream-base
+    environment:
+      - RTMP_URL=${RTMP_URL:-rtmp://localhost/live/stream}
+    command: >
+      -f v4l2
+      -framerate 30
+      -video_size 1280x720
+      -i /dev/video0
+      -c:v libx264
+      -preset veryfast
+      -maxrate 2000k
+      -bufsize 4000k
+      -pix_fmt yuv420p
+      -g 60
+      -f flv
+      ${RTMP_URL}
+
+  # Stream desktop (X11) to RTMP
+  desktop-stream:
+    extends:
+      service: ffmpeg-stream-base
+    environment:
+      - DISPLAY=${DISPLAY:-:0}
+      - RTMP_URL=${RTMP_URL:-rtmp://localhost/live/stream}
+    volumes:
+      - ../media:/tmp/workdir
+      - /tmp/.X11-unix:/tmp/.X11-unix:ro
+    command: >
+      -f x11grab
+      -framerate 30
+      -video_size ${SCREEN_SIZE:-1920x1080}
+      -i ${DISPLAY}+${OFFSET:-0,0}
+      -c:v libx264
+      -preset veryfast
+      -maxrate 3000k
+      -bufsize 6000k
+      -pix_fmt yuv420p
+      -g 60
+      -f flv
+      ${RTMP_URL}
+
+  # Restream from one RTMP source to another
+  rtmp-relay:
+    extends:
+      service: ffmpeg-stream-base
+    environment:
+      - SOURCE_RTMP=${SOURCE_RTMP:-rtmp://source.server/live/stream}
+      - DEST_RTMP=${DEST_RTMP:-rtmp://dest.server/live/stream}
+    command: >
+      -i ${SOURCE_RTMP}
+      -c copy
+      -f flv
+      ${DEST_RTMP}
+
+  # Stream with custom overlay/watermark
+  stream-with-overlay:
+    extends:
+      service: ffmpeg-stream-base
+    environment:
+      - RTMP_URL=${RTMP_URL:-rtmp://localhost/live/stream}
+    command: >
+      -re
+      -i input/video.mp4
+      -i input/watermark.png
+      -filter_complex "[0:v][1:v]overlay=W-w-10:H-h-10"
+      -c:v libx264
+      -preset veryfast
+      -maxrate 3000k
+      -bufsize 6000k
+      -c:a aac
+      -b:a 128k
+      -f flv
+      ${RTMP_URL}
+
+  # Multi-bitrate streaming (adaptive streaming)
+  adaptive-stream:
+    extends:
+      service: ffmpeg-stream-base
+    entrypoint: /bin/sh
+    command: >
+      -c "ffmpeg -re -i input/video.mp4 \
+      -map 0:v -map 0:a -map 0:v -map 0:a -map 0:v -map 0:a \
+      -c:v:0 libx264 -b:v:0 2000k -maxrate:v:0 2200k -bufsize:v:0 4000k -preset:v:0 fast -g 50 \
+      -c:v:1 libx264 -b:v:1 1000k -maxrate:v:1 1100k -bufsize:v:1 2000k -preset:v:1 fast -g 50 \
+      -c:v:2 libx264 -b:v:2 500k -maxrate:v:2 550k -bufsize:v:2 1000k -preset:v:2 fast -g 50 \
+      -c:a aac -b:a 128k \
+      -f hls \
+      -hls_time 4 \
+      -hls_playlist_type event \
+      -var_stream_map 'v:0,a:0,name:1080p v:1,a:1,name:720p v:2,a:2,name:480p' \
+      -master_pl_name master.m3u8 \
+      -hls_segment_filename output/stream_%v/segment_%03d.ts \
+      output/stream_%v/playlist.m3u8"
+
+  # Stream with real-time transcoding for low latency
+  low-latency-stream:
+    extends:
+      service: ffmpeg-stream-base
+    environment:
+      - RTMP_URL=${RTMP_URL:-rtmp://localhost/live/stream}
+    command: >
+      -re
+      -i input/video.mp4
+      -c:v libx264
+      -preset ultrafast
+      -tune zerolatency
+      -maxrate 3000k
+      -bufsize 3000k
+      -pix_fmt yuv420p
+      -g 30
+      -c:a aac
+      -b:a 128k
+      -f flv
+      -flvflags no_duration_filesize
+      ${RTMP_URL}

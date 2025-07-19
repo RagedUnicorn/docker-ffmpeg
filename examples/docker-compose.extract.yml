@@ -1,0 +1,146 @@
+# Docker Compose configuration for extracting audio, video, and other media components
+#
+# Usage examples:
+#   docker-compose -f examples/docker-compose.extract.yml run --rm extract-audio
+#   docker-compose -f examples/docker-compose.extract.yml run --rm extract-video-only
+#   docker-compose -f examples/docker-compose.extract.yml run --rm extract-thumbnails
+#
+# Place your input files in ./media/input/
+# Output files will be saved to ./media/output/
+
+services:
+  # Base service configuration
+  ffmpeg-base:
+    image: ragedunicorn/ffmpeg:${FFMPEG_VERSION:-latest}
+    volumes:
+      - ../media:/tmp/workdir
+    working_dir: /tmp/workdir
+    stdin_open: true
+    tty: true
+
+  # Extract audio from video file
+  extract-audio:
+    extends:
+      service: ffmpeg-base
+    command: >
+      -i input/video.mp4
+      -vn
+      -acodec copy
+      output/audio_extracted.aac
+
+  # Extract audio and convert to MP3
+  extract-audio-mp3:
+    extends:
+      service: ffmpeg-base
+    command: >
+      -i input/video.mp4
+      -vn
+      -acodec libmp3lame
+      -ab 256k
+      output/audio_extracted.mp3
+
+  # Extract video only (remove audio)
+  extract-video-only:
+    extends:
+      service: ffmpeg-base
+    command: >
+      -i input/video.mp4
+      -c:v copy
+      -an
+      output/video_no_audio.mp4
+
+  # Extract single frame as image
+  extract-frame:
+    extends:
+      service: ffmpeg-base
+    command: >
+      -i input/video.mp4
+      -ss ${TIMESTAMP:-00:00:10}
+      -vframes 1
+      -q:v 2
+      output/frame.jpg
+
+  # Extract thumbnails every N seconds
+  extract-thumbnails:
+    extends:
+      service: ffmpeg-base
+    command: >
+      -i input/video.mp4
+      -vf "fps=1/${INTERVAL:-10}"
+      -q:v 2
+      output/thumb_%04d.jpg
+
+  # Extract specific time segment
+  extract-segment:
+    extends:
+      service: ffmpeg-base
+    command: >
+      -i input/video.mp4
+      -ss ${START_TIME:-00:00:30}
+      -t ${DURATION:-00:01:00}
+      -c copy
+      output/segment.mp4
+
+  # Extract all keyframes as images
+  extract-keyframes:
+    extends:
+      service: ffmpeg-base
+    command: >
+      -i input/video.mp4
+      -vf "select='eq(pict_type,PICT_TYPE_I)'"
+      -vsync vfr
+      -q:v 2
+      output/keyframe_%04d.jpg
+
+  # Extract subtitles (if embedded)
+  extract-subtitles:
+    extends:
+      service: ffmpeg-base
+    command: >
+      -i input/video.mp4
+      -map 0:s:${SUBTITLE_STREAM:-0}
+      -c:s srt
+      output/subtitles.srt
+
+  # Extract metadata to text file
+  extract-metadata:
+    extends:
+      service: ffmpeg-base
+    entrypoint: ffprobe
+    command: >
+      -v quiet
+      -print_format json
+      -show_format
+      -show_streams
+      input/video.mp4
+
+  # Extract specific audio channel
+  extract-audio-channel:
+    extends:
+      service: ffmpeg-base
+    command: >
+      -i input/video.mp4
+      -map_channel 0.1.${CHANNEL:-0}
+      -c:a pcm_s16le
+      output/channel_${CHANNEL:-0}.wav
+
+  # Create animated GIF from video segment
+  extract-gif-segment:
+    extends:
+      service: ffmpeg-base
+    command: >
+      -ss ${START_TIME:-00:00:00}
+      -t ${DURATION:-00:00:05}
+      -i input/video.mp4
+      -vf "fps=10,scale=320:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse"
+      -loop 0
+      output/segment.gif
+
+  # Extract all frames as images
+  extract-all-frames:
+    extends:
+      service: ffmpeg-base
+    command: >
+      -i input/video.mp4
+      -q:v 2
+      output/frame_%06d.jpg

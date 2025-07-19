@@ -1,0 +1,116 @@
+# Docker Compose configuration for common video/audio conversion tasks
+#
+# Usage examples:
+#   docker-compose -f examples/docker-compose.convert.yml run --rm mp4-to-webm
+#   docker-compose -f examples/docker-compose.convert.yml run --rm compress-video
+#   docker-compose -f examples/docker-compose.convert.yml run --rm convert-to-h265
+#
+# Place your input files in ./media/input/
+# Output files will be saved to ./media/output/
+
+services:
+  # Base service configuration (inherited by other services)
+  ffmpeg-base:
+    image: ragedunicorn/ffmpeg:${FFMPEG_VERSION:-latest}
+    volumes:
+      - ../media:/tmp/workdir
+    working_dir: /tmp/workdir
+    stdin_open: true
+    tty: true
+
+  # Convert MP4 to WebM (VP9 + Opus)
+  mp4-to-webm:
+    extends:
+      service: ffmpeg-base
+    command: >
+      -i input/video.mp4
+      -c:v libvpx-vp9
+      -b:v 1M
+      -c:a libopus
+      -b:a 128k
+      output/video.webm
+
+  # Convert video to H.265/HEVC for better compression
+  convert-to-h265:
+    extends:
+      service: ffmpeg-base
+    command: >
+      -i input/video.mp4
+      -c:v libx265
+      -crf 28
+      -preset medium
+      -c:a copy
+      output/video_h265.mp4
+
+  # Compress video while maintaining quality
+  compress-video:
+    extends:
+      service: ffmpeg-base
+    command: >
+      -i input/video.mp4
+      -c:v libx264
+      -crf 23
+      -preset slow
+      -c:a aac
+      -b:a 128k
+      output/video_compressed.mp4
+
+  # Convert to GIF with optimized settings
+  video-to-gif:
+    extends:
+      service: ffmpeg-base
+    command: >
+      -i input/video.mp4
+      -vf "fps=15,scale=480:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse"
+      -loop 0
+      output/animation.gif
+
+  # Convert any video to standard MP4 (H.264 + AAC)
+  standardize-video:
+    extends:
+      service: ffmpeg-base
+    command: >
+      -i input/video.${INPUT_EXT:-avi}
+      -c:v libx264
+      -preset medium
+      -crf 22
+      -c:a aac
+      -b:a 192k
+      -movflags +faststart
+      output/video_standard.mp4
+
+  # Convert audio to MP3
+  audio-to-mp3:
+    extends:
+      service: ffmpeg-base
+    command: >
+      -i input/audio.${INPUT_EXT:-wav}
+      -c:a libmp3lame
+      -b:a 320k
+      output/audio.mp3
+
+  # Convert audio to Opus (high quality, low bitrate)
+  audio-to-opus:
+    extends:
+      service: ffmpeg-base
+    command: >
+      -i input/audio.${INPUT_EXT:-wav}
+      -c:a libopus
+      -b:a 128k
+      -vbr on
+      -compression_level 10
+      output/audio.opus
+
+  # Batch convert all MP4 files to WebM
+  # Usage: docker-compose -f examples/docker-compose.convert.yml run --rm batch-mp4-to-webm
+  batch-mp4-to-webm:
+    extends:
+      service: ffmpeg-base
+    entrypoint: /bin/sh
+    command: >
+      -c "for file in input/*.mp4; do
+        if [ -f \"$$file\" ]; then
+          filename=$$(basename \"$$file\" .mp4);
+          ffmpeg -i \"$$file\" -c:v libvpx-vp9 -b:v 1M -c:a libopus -b:a 128k \"output/$$filename.webm\";
+        fi
+      done"

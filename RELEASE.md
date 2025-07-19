@@ -86,7 +86,6 @@ git commit -m "fix: resolve memory leak in transcoding"
 git commit -m "docs: update usage examples"
 ```
 
-
 ### Pre-release Testing
 
 Before creating a release:
