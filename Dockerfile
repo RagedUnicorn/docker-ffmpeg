@@ -8,7 +8,10 @@ ARG PREFIX=/opt/ffmpeg
 ARG LD_LIBRARY_PATH=/opt/ffmpeg/lib
 ARG MAKEFLAGS="-j4"
 
-LABEL com.ragedunicorn.maintainer="Michael Wiesendanger <michael.wiesendanger@gmail.com>"
+# Build stage labels
+LABEL org.opencontainers.image.authors="Michael Wiesendanger <michael.wiesendanger@gmail.com>" \
+      org.opencontainers.image.source="https://github.com/RagedUnicorn/docker-ffmpeg" \
+      org.opencontainers.image.licenses="MIT"
 
 # Install build dependencies
 RUN apk add --no-cache --update \
@@ -93,8 +96,20 @@ RUN cd ${PREFIX}/bin && \
 FROM alpine:3.22.1
 
 ARG PREFIX=/opt/ffmpeg
+ARG BUILD_DATE
+ARG VERSION
 
-LABEL com.ragedunicorn.maintainer="Michael Wiesendanger <michael.wiesendanger@gmail.com>"
+# OCI-compliant labels
+LABEL org.opencontainers.image.title="FFmpeg on Alpine Linux" \
+      org.opencontainers.image.description="Lightweight FFmpeg Docker image with comprehensive codec support built on Alpine Linux" \
+      org.opencontainers.image.vendor="ragedunicorn" \
+      org.opencontainers.image.authors="Michael Wiesendanger <michael.wiesendanger@gmail.com>" \
+      org.opencontainers.image.source="https://github.com/RagedUnicorn/docker-ffmpeg" \
+      org.opencontainers.image.documentation="https://github.com/RagedUnicorn/docker-ffmpeg/blob/master/README.md" \
+      org.opencontainers.image.licenses="MIT" \
+      org.opencontainers.image.version="${VERSION}" \
+      org.opencontainers.image.created="${BUILD_DATE}" \
+      org.opencontainers.image.base.name="docker.io/library/alpine:3.22.1"
 
 # Install runtime dependencies only
 RUN apk add --no-cache --update \
