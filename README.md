@@ -21,6 +21,27 @@ This Docker image provides a lightweight FFmpeg installation built from source o
 - **Multi-stage build**: Optimized for minimal final image size
 - **Volume mounting**: Easy file input/output through `/tmp/workdir`
 
+## Supported Codecs
+
+### Video Codecs
+- H.264 (libx264)
+- H.265/HEVC (libx265)
+- VP8/VP9 (libvpx)
+- Theora (libtheora)
+
+### Audio Codecs
+- AAC (libfdk-aac)
+- MP3 (libmp3lame)
+- Opus (libopus)
+- Vorbis (libvorbis)
+
+### Additional Features
+- Subtitles (libass)
+- Text rendering (libfreetype)
+- WebP support (libwebp)
+- RTMP streaming (librtmp)
+- SSL/TLS support (openssl)
+
 ## Building the Image
 
 ```bash
@@ -185,50 +206,17 @@ ffmpeg -i input/video.mp4 output/converted.mp4
    RTMP_URL=rtmp://streaming.server/live/
    ```
 
-## Supported Codecs
-
-### Video Codecs
-- H.264 (libx264)
-- H.265/HEVC (libx265)
-- VP8/VP9 (libvpx)
-- Theora (libtheora)
-
-### Audio Codecs
-- AAC (libfdk-aac)
-- MP3 (libmp3lame)
-- Opus (libopus)
-- Vorbis (libvorbis)
-
-### Additional Features
-- Subtitles (libass)
-- Text rendering (libfreetype)
-- WebP support (libwebp)
-- RTMP streaming (librtmp)
-- SSL/TLS support (openssl)
-
 ## Versioning
 
 This project uses semantic versioning that matches the Docker image contents:
 
-**Git Tag Format:** `v{ffmpeg_version}-alpine{alpine_version}-{build_number}`
-**Docker Tag Format:** `{ffmpeg_version}-alpine{alpine_version}-{build_number}` (without 'v' prefix)
+**Format:** `{ffmpeg_version}-alpine{alpine_version}-{build_number}`
 
-**Examples:**
-- Git tag: `v7.1.1-alpine3.22.0-1` → Docker tag: `7.1.1-alpine3.22.0-1`
-- Git tag: `v7.1.1-alpine3.22.0-2` → Docker tag: `7.1.1-alpine3.22.0-2` (rebuild)
-- Git tag: `v7.1.1-alpine3.22.1-1` → Docker tag: `7.1.1-alpine3.22.1-1` (Alpine update)
-- Git tag: `v7.1.2-alpine3.22.0-1` → Docker tag: `7.1.2-alpine3.22.0-1` (FFmpeg update)
+Examples:
+- `7.1.1-alpine3.22.0-1` - FFmpeg 7.1.1 on Alpine 3.22.0, build 1
+- `latest` - Most recent stable release
 
-**Creating a Release:**
-```bash
-git tag v7.1.1-alpine3.22.0-1
-git push origin v7.1.1-alpine3.22.0-1
-```
-
-This will automatically:
-- Build and push Docker images with the corresponding tags
-- Create a GitHub release
-- Tag images on both GitHub Container Registry and Docker Hub
+For detailed release process and versioning guidelines, see [RELEASE.md](RELEASE.md).
 
 ## Automated Dependency Updates
 
@@ -238,6 +226,11 @@ This project uses [Renovate](https://docs.renovatebot.com/) to automatically che
 
 Renovate runs weekly (every Monday) and creates pull requests when updates are available. The configuration tracks 
 both Alpine Linux and FFmpeg releases, creating separate pull requests for each update.
+
+## Links
+
+- [FFmpeg Documentation](https://ffmpeg.org/documentation.html)
+- [Alpine Linux](https://www.alpinelinux.org/)
 
 # License
 
