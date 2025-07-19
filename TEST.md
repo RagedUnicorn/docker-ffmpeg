@@ -144,16 +144,30 @@ Example of adding a new codec test:
 
 ## CI/CD Integration
 
-These tests can be integrated into CI/CD pipelines. The `test-all` service returns:
-- Exit code 0: All tests passed
-- Exit code 1: One or more tests failed
+These tests are automatically run in GitHub Actions:
 
-Example GitHub Actions step:
+- **On every push** to master branches
+- **On every pull request** to master branches
+- **Before releases** to ensure quality
+
+The test workflow (`.github/workflows/test.yml`):
+1. Builds the Docker image
+2. Runs all Container Structure Tests
+3. Verifies basic FFmpeg functionality
+4. Blocks releases if tests fail
+
+Manual integration example:
 
 ```yaml
 - name: Run Container Structure Tests
+  env:
+    FFMPEG_VERSION: test
   run: docker-compose -f docker-compose.test.yml run test-all
 ```
+
+The `test-all` service returns:
+- Exit code 0: All tests passed
+- Exit code 1: One or more tests failed
 
 ## Test Maintenance
 
