@@ -39,7 +39,7 @@ jobs:
           FFMPEG_VERSION: test
         run: |
           echo "::group::📁 File Structure Tests"
-          docker compose -f docker-compose.test.yml up --exit-code-from container-test container-test
+          docker compose -f docker-compose.test.yml up --exit-code-from container-test container-test 2>&1 | tee test-file-structure.log
           echo "::endgroup::"
 
       - name: Run Command Execution Tests
@@ -49,7 +49,7 @@ jobs:
           FFMPEG_VERSION: test
         run: |
           echo "::group::🔧 Command Execution Tests"
-          docker compose -f docker-compose.test.yml up --exit-code-from container-test-command container-test-command
+          docker compose -f docker-compose.test.yml up --exit-code-from container-test-command container-test-command 2>&1 | tee test-command-execution.log
           echo "::endgroup::"
 
       - name: Run Metadata Tests
@@ -59,7 +59,7 @@ jobs:
           FFMPEG_VERSION: test
         run: |
           echo "::group::🏷️ Metadata Tests"
-          docker compose -f docker-compose.test.yml up --exit-code-from container-test-metadata container-test-metadata
+          docker compose -f docker-compose.test.yml up --exit-code-from container-test-metadata container-test-metadata 2>&1 | tee test-metadata.log
           echo "::endgroup::"
 
       - name: Test basic FFmpeg functionality
@@ -67,11 +67,13 @@ jobs:
         continue-on-error: true
         run: |
           echo "::group::🎬 Basic FFmpeg Functionality Test"
-          echo "Testing FFmpeg version..."
-          docker run --rm ragedunicorn/ffmpeg:test -version
-          echo ""
-          echo "Testing available codecs..."
-          docker run --rm ragedunicorn/ffmpeg:test -codecs 2>&1 | grep -E "(h264|h265|opus|mp3|vp9)" | head -10
+          {
+            echo "Testing FFmpeg version..."
+            docker run --rm ragedunicorn/ffmpeg:test -version
+            echo ""
+            echo "Testing available codecs..."
+            docker run --rm ragedunicorn/ffmpeg:test -codecs 2>&1 | grep -E "(h264|h265|opus|mp3|vp9)" | head -10
+          } 2>&1 | tee test-basic-functionality.log
           echo "::endgroup::"
 
       - name: Generate Test Summary
@@ -119,11 +121,14 @@ jobs:
             exit 1
           fi
           
-      - name: Upload test results
-        if: failure()
+      - name: Upload test logs
+        if: always() && (steps.file-tests.outcome == 'failure' || steps.command-tests.outcome == 'failure' || steps.metadata-tests.outcome == 'failure' || steps.basic-tests.outcome == 'failure')
         uses: actions/upload-artifact@v4
         with:
-          name: test-results
+          name: test-logs
           path: |
-            test-*.log
+            test-file-structure.log
+            test-command-execution.log
+            test-metadata.log
+            test-basic-functionality.log
           retention-days: 7
