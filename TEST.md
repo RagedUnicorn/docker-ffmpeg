@@ -52,38 +52,68 @@ Validates:
 ### Prerequisites
 
 1. Docker must be installed and running
-2. The FFmpeg image must be available locally or pullable:
+2. Build the FFmpeg image locally before testing
 
-   ```bash
-   docker pull ragedunicorn/ffmpeg:latest
-   ```
+### Important: Always Test Local Builds
+
+**⚠️ Always build and test locally to ensure consistency:**
+
+```bash
+# Build the image locally with a test tag
+docker build -t ragedunicorn/ffmpeg:test .
+
+# Run tests against your local build
+FFMPEG_VERSION=test docker compose -f docker-compose.test.yml run test-all
+```
+
+**Why local testing is important:**
+- Remote images (Docker Hub, GHCR) may have different labels due to CI/CD overrides
+- Ensures you're testing exactly what you built
+- Avoids false positives/negatives from version mismatches
+- Guarantees consistent test results
+
+**Never pull remote images for testing:**
+```bash
+# ❌ DON'T DO THIS - may have different labels/settings
+docker pull ragedunicorn/ffmpeg:latest
+docker compose -f docker-compose.test.yml run test-all
+
+# ✅ DO THIS - test your local build
+docker build -t ragedunicorn/ffmpeg:test .
+FFMPEG_VERSION=test docker compose -f docker-compose.test.yml run test-all
+```
 
 ### Test Execution
 
-Run all tests sequentially:
+Run all tests against your local build:
 
 ```bash
-docker compose -f docker-compose.test.yml run test-all
+# Ensure you've built locally first!
+FFMPEG_VERSION=test docker compose -f docker-compose.test.yml run test-all
 ```
 
 Run specific test categories:
 
 ```bash
 # File structure and library tests
-docker compose -f docker-compose.test.yml up container-test
+FFMPEG_VERSION=test docker compose -f docker-compose.test.yml up container-test
 
 # Command execution and codec tests
-docker compose -f docker-compose.test.yml up container-test-command
+FFMPEG_VERSION=test docker compose -f docker-compose.test.yml up container-test-command
 
 # Metadata and label tests
-docker compose -f docker-compose.test.yml up container-test-metadata
+FFMPEG_VERSION=test docker compose -f docker-compose.test.yml up container-test-metadata
 ```
 
 ### Testing Different Versions
 
-Test a specific version by setting the environment variable:
+When testing different versions, always build locally first:
 
 ```bash
+# Build a specific version locally
+docker build -t ragedunicorn/ffmpeg:7.1.1-alpine3.22.1-1 .
+
+# Test that specific version
 FFMPEG_VERSION=7.1.1-alpine3.22.1-1 docker compose -f docker-compose.test.yml run test-all
 ```
 
@@ -104,9 +134,26 @@ Then update the paths in `test/ffmpeg_test.yml` accordingly.
 
 ### Metadata Test Failures
 
-If testing locally built images, some labels may differ from the released images. The GitHub Actions workflow sets certain labels during the build process that override Dockerfile labels.
+**Common causes:**
 
-For local testing of metadata, ensure you're testing against images built with the same process as the CI/CD pipeline.
+1. **Testing remote images instead of local builds**
+   - Remote images (Docker Hub, GHCR) have labels overridden by CI/CD
+   - Always test your local builds with `FFMPEG_VERSION=test`
+
+2. **Label value mismatches**
+   - CI/CD systems may capitalize values (e.g., "RagedUnicorn" vs "ragedunicorn")
+   - GitHub Actions may override labels during build
+   - Docker Hub automated builds may set different values
+
+3. **Version-specific labels**
+   - The `org.opencontainers.image.version` label changes with each build
+   - Build date labels are dynamic
+
+**Solution:** Always build and test locally before pushing:
+```bash
+docker build -t ragedunicorn/ffmpeg:test .
+FFMPEG_VERSION=test docker compose -f docker-compose.test.yml run test-all
+```
 
 ### Permission Errors
 

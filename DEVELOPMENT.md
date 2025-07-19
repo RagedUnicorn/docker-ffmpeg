@@ -79,15 +79,20 @@ docker buildx build \
 
 ### 3. Testing Your Changes
 
-After making changes, always run the test suite:
+After making changes, always build and test locally:
 
 ```bash
-# Run all tests
-docker compose -f docker-compose.test.yml run test-all
+# Build your changes locally
+docker build -t ragedunicorn/ffmpeg:test .
+
+# Run all tests against your local build
+FFMPEG_VERSION=test docker compose -f docker-compose.test.yml run test-all
 
 # Run specific tests during development
-docker compose -f docker-compose.test.yml up container-test-command
+FFMPEG_VERSION=test docker compose -f docker-compose.test.yml up container-test-command
 ```
+
+**Important:** Never test against remote images - they may have different labels or configurations due to CI/CD overrides.
 
 See [TEST.md](TEST.md) for detailed testing information.
 
