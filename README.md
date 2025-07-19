@@ -154,6 +154,22 @@ Many compose services support environment variables for customization:
 - `START_TIME`, `DURATION`: For segment extraction
 - See individual compose files for more options
 
+### Development Mode
+
+For testing and debugging, use the development compose file:
+
+```bash
+# Build the image locally
+docker-compose -f docker-compose.dev.yml build
+
+# Run in development mode (interactive shell)
+docker-compose -f docker-compose.dev.yml run --rm ffmpeg-dev
+
+# Inside the container, you can run ffmpeg manually
+ffmpeg -version
+ffmpeg -i input/video.mp4 output/converted.mp4
+```
+
 ### Tips
 
 1. **Custom Commands**: Override the default command:

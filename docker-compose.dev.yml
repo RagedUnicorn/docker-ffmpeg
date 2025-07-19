@@ -1,0 +1,35 @@
+# Docker Compose configuration for development
+#
+# This file is used for building and testing the FFmpeg image locally
+#
+# Usage:
+#   docker-compose -f docker-compose.dev.yml build
+#   docker-compose -f docker-compose.dev.yml run --rm ffmpeg-dev
+#
+# This will drop you into a shell where you can manually run ffmpeg commands
+
+services:
+  ffmpeg-dev:
+    build: .
+    image: ragedunicorn/ffmpeg:${FFMPEG_VERSION:-latest}-dev
+    volumes:
+
+      - ./media:/tmp/workdir
+    working_dir: /tmp/workdir
+    stdin_open: true
+    tty: true
+    # Override entrypoint to get a shell
+    entrypoint: /bin/sh
+    labels:
+      org.opencontainers.image.title: "FFmpeg on Alpine Linux (Dev)"
+      org.opencontainers.image.description: "FFmpeg development environment for testing and debugging"
+      org.opencontainers.image.vendor: "ragedunicorn"
+    environment:
+      - TERM=xterm-256color
+      - PS1=\[\033[1;36m\]ffmpeg-dev\[\033[0m\]:\w\$ 
+    # Resource limits for development (optional)
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: '4'
+    #       memory: 4G
