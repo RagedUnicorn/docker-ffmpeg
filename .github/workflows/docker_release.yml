@@ -29,8 +29,14 @@ jobs:
         env:
           FFMPEG_VERSION: test
         run: |
+          echo "::notice title=🧪 Running Tests::Validating Docker image before release..."
           docker pull ragedunicorn/container-test:latest
+          
+          echo "::group::Running all Container Structure Tests"
           docker compose -f docker-compose.test.yml run --rm test-all
+          echo "::endgroup::"
+          
+          echo "::notice title=✅ Tests Passed::All Container Structure Tests completed successfully!"
 
   build-and-push:
     needs: test
