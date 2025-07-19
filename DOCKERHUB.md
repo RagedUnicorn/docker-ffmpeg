@@ -63,11 +63,6 @@ This image uses semantic versioning that includes all component versions:
 
 **Format:** `{ffmpeg_version}-alpine{alpine_version}-{build_number}`
 
-### Available Tags
-
-- `latest` - Most recent stable build
-- `7.1.1-alpine3.22.0-1` - Specific version with FFmpeg 7.1.1, Alpine 3.22.0, build 1
-
 ### Version Examples
 
 - `7.1.1-alpine3.22.0-1` - Initial release with FFmpeg 7.1.1 and Alpine 3.22.0
