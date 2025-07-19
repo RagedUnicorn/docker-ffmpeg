@@ -11,8 +11,10 @@
 #   - Place input files in ./media/input/
 #   - Find output files in ./media/output/
 #
-# You can override the image version by setting FFMPEG_VERSION environment variable:
-#   FFMPEG_VERSION=7.1.1 docker-compose run --rm ffmpeg [args]
+# The image version is set in the .env file (default: latest)
+# You can override it by:
+#   - Editing the .env file
+#   - Setting environment variable: FFMPEG_VERSION=7.1.1 docker-compose run --rm ffmpeg [args]
 
 services:
   ffmpeg:

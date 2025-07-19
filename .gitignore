@@ -29,9 +29,6 @@ media/
 *.wav
 *.webm
 
-# Environment files
-.env
-
 # IDE files
 .vscode/
 *.swp

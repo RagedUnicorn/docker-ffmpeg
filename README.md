@@ -163,9 +163,9 @@ Many compose services support environment variables for customization:
 
 2. **Multiple Files**: Use the batch processing configurations for processing multiple files efficiently
 
-3. **Persistent Settings**: Create a `.env` file to store commonly used environment variables:
+3. **Persistent Settings**: The repository includes a `.env` file with default settings. You can modify it to set your preferred versions:
    ```env
-   FFMPEG_VERSION=7.1.1
+   FFMPEG_VERSION=7.1.1-alpine3.22.1-1
    RTMP_URL=rtmp://streaming.server/live/
    ```
 
