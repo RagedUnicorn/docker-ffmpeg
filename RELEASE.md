@@ -6,7 +6,7 @@ This document describes how to create a new release for the Docker FFmpeg projec
 
 ```bash
 # Tag format: v{ffmpeg_version}-alpine{alpine_version}-{build_number}
-git tag v7.1.1-alpine3.22.0-1
+git tag -a v7.1.1-alpine3.22.0-1 -m "v7.1.1-alpine3.22.0-1"
 git push origin v7.1.1-alpine3.22.0-1
 ```
 
