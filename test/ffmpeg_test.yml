@@ -1,0 +1,43 @@
+schemaVersion: 2.0.0
+
+fileExistenceTests:
+  - name: 'FFmpeg binary exists'
+    path: '/usr/local/bin/ffmpeg'
+    shouldExist: true
+    permissions: '-rwxr-xr-x'
+  
+  - name: 'FFprobe binary exists'
+    path: '/usr/local/bin/ffprobe'
+    shouldExist: true
+    permissions: '-rwxr-xr-x'
+  
+  - name: 'Working directory exists'
+    path: '/tmp/workdir'
+    shouldExist: true
+    isExecutableBy: 'any'
+
+  # Core libraries (Alpine uses versioned .so files)
+  - name: 'libx264 exists'
+    path: '/usr/lib/libx264.so.164'
+    shouldExist: true
+  
+  - name: 'libx265 exists'
+    path: '/usr/lib/libx265.so.209'
+    shouldExist: true
+  
+  - name: 'libvpx exists'
+    path: '/usr/lib/libvpx.so.9'
+    shouldExist: true
+  
+  - name: 'libopus exists'
+    path: '/usr/lib/libopus.so.0'
+    shouldExist: true
+  
+  - name: 'libmp3lame exists'
+    path: '/usr/lib/libmp3lame.so.0'
+    shouldExist: true
+
+fileContentTests:
+  - name: 'CA certificates installed'
+    path: '/etc/ssl/certs/ca-certificates.crt'
+    expectedContents: ['-----BEGIN CERTIFICATE-----']

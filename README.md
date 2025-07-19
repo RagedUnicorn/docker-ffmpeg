@@ -42,11 +42,17 @@ This Docker image provides a lightweight FFmpeg installation built from source o
 - RTMP streaming (librtmp)
 - SSL/TLS support (openssl)
 
-## Building the Image
+## Quick Start
 
 ```bash
-docker build -t ragedunicorn/ffmpeg .
+# Pull the image
+docker pull ragedunicorn/ffmpeg:latest
+
+# Run FFmpeg
+docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:latest -i input.mp4 output.mp4
 ```
+
+For development and building from source, see [DEVELOPMENT.md](DEVELOPMENT.md).
 
 ## Usage
 
@@ -175,22 +181,6 @@ Many compose services support environment variables for customization:
 - `START_TIME`, `DURATION`: For segment extraction
 - See individual compose files for more options
 
-### Development Mode
-
-For testing and debugging, use the development compose file:
-
-```bash
-# Build the image locally
-docker-compose -f docker-compose.dev.yml build
-
-# Run in development mode (interactive shell)
-docker-compose -f docker-compose.dev.yml run --rm ffmpeg-dev
-
-# Inside the container, you can run ffmpeg manually
-ffmpeg -version
-ffmpeg -i input/video.mp4 output/converted.mp4
-```
-
 ### Tips
 
 1. **Custom Commands**: Override the default command:
@@ -226,6 +216,12 @@ This project uses [Renovate](https://docs.renovatebot.com/) to automatically che
 
 Renovate runs weekly (every Monday) and creates pull requests when updates are available. The configuration tracks 
 both Alpine Linux and FFmpeg releases, creating separate pull requests for each update.
+
+## Documentation
+
+- [Development Guide](DEVELOPMENT.md) - Building, debugging, and contributing
+- [Testing Guide](TEST.md) - Running and writing tests
+- [Release Process](RELEASE.md) - Creating releases and versioning
 
 ## Links
 

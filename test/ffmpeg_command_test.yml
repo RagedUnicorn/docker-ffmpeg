@@ -1,0 +1,73 @@
+schemaVersion: 2.0.0
+
+commandTests:
+  - name: 'FFmpeg version check'
+    command: 'ffmpeg'
+    args: ['-version']
+    expectedOutput: 
+      - 'ffmpeg version 7.1.1'
+      - 'libavutil'
+      - 'libavcodec'
+      - 'libavformat'
+    exitCode: 0
+
+  - name: 'FFprobe version check'
+    command: 'ffprobe'
+    args: ['-version']
+    expectedOutput:
+      - 'ffprobe version 7.1.1'
+    exitCode: 0
+
+  - name: 'List video encoders'
+    command: 'ffmpeg'
+    args: ['-encoders']
+    expectedOutput:
+      - 'libx264'
+      - 'libx265'
+      - 'libvpx'
+      - 'libvpx-vp9'
+      - 'libtheora'
+    exitCode: 0
+
+  - name: 'List audio encoders'
+    command: 'ffmpeg'
+    args: ['-encoders']
+    expectedOutput:
+      - 'libmp3lame'
+      - 'libopus'
+      - 'libvorbis'
+      - 'libfdk_aac'
+    exitCode: 0
+
+  - name: 'Check OpenSSL support'
+    command: 'ffmpeg'
+    args: ['-protocols']
+    expectedOutput:
+      - 'https'
+      - 'tls'
+    exitCode: 0
+
+  - name: 'Check RTMP support'
+    command: 'ffmpeg'
+    args: ['-protocols']
+    expectedOutput:
+      - 'rtmp'
+      - 'rtmps'
+    exitCode: 0
+
+  - name: 'Check filter support'
+    command: 'ffmpeg'
+    args: ['-filters']
+    expectedOutput:
+      - 'scale'
+      - 'overlay'
+      - 'ass'
+      - 'subtitles'
+    exitCode: 0
+
+  - name: 'Test simple conversion command'
+    setup: [['sh', '-c', 'echo "test" > /tmp/workdir/test.txt']]
+    command: 'sh'
+    args: ['-c', 'cd /tmp/workdir && ls']
+    expectedOutput: ['test.txt']
+    exitCode: 0
