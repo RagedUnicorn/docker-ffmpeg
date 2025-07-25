@@ -15,9 +15,8 @@ metadataTest:
       value: 'MIT'
     - key: 'org.opencontainers.image.base.name'
       value: 'docker.io/library/alpine:3.22.1'
-  
-  # Container configuration
+
   entrypoint: ['ffmpeg']
   cmd: ['-help']
   workdir: '/tmp/workdir'
-  user: ''  # Should run as root
+  user: 'ffmpeg'

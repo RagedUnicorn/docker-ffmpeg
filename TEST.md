@@ -64,18 +64,21 @@ docker build -t ragedunicorn/ffmpeg:test .
 ```
 
 **Linux/macOS:**
+
 ```bash
 # Run tests against your local build
 FFMPEG_VERSION=test docker compose -f docker-compose.test.yml run test-all
 ```
 
 **Windows (PowerShell):**
+
 ```powershell
 # Run tests against your local build
 $env:FFMPEG_VERSION="test"; docker compose -f docker-compose.test.yml run test-all
 ```
 
 **Windows (Command Prompt):**
+
 ```cmd
 # Run tests against your local build
 set FFMPEG_VERSION=test && docker compose -f docker-compose.test.yml run test-all
@@ -90,6 +93,7 @@ set FFMPEG_VERSION=test && docker compose -f docker-compose.test.yml run test-al
 **Never pull remote images for testing:**
 
 **❌ DON'T DO THIS - may have different labels/settings:**
+
 ```bash
 docker pull ragedunicorn/ffmpeg:latest
 docker compose -f docker-compose.test.yml run test-all
@@ -98,12 +102,14 @@ docker compose -f docker-compose.test.yml run test-all
 **✅ DO THIS - test your local build:**
 
 Linux/macOS:
+
 ```bash
 docker build -t ragedunicorn/ffmpeg:test .
 FFMPEG_VERSION=test docker compose -f docker-compose.test.yml run test-all
 ```
 
 Windows (PowerShell):
+
 ```powershell
 docker build -t ragedunicorn/ffmpeg:test .
 $env:FFMPEG_VERSION="test"; docker compose -f docker-compose.test.yml run test-all
@@ -114,18 +120,21 @@ $env:FFMPEG_VERSION="test"; docker compose -f docker-compose.test.yml run test-a
 Run all tests against your local build:
 
 **Linux/macOS:**
+
 ```bash
 # Ensure you've built locally first!
 FFMPEG_VERSION=test docker compose -f docker-compose.test.yml run test-all
 ```
 
 **Windows (PowerShell):**
+
 ```powershell
 # Ensure you've built locally first!
 $env:FFMPEG_VERSION="test"; docker compose -f docker-compose.test.yml run test-all
 ```
 
 **Windows (Command Prompt):**
+
 ```cmd
 # Ensure you've built locally first!
 set FFMPEG_VERSION=test && docker compose -f docker-compose.test.yml run test-all
@@ -134,6 +143,7 @@ set FFMPEG_VERSION=test && docker compose -f docker-compose.test.yml run test-al
 Run specific test categories:
 
 **Linux/macOS:**
+
 ```bash
 # File structure and library tests
 FFMPEG_VERSION=test docker compose -f docker-compose.test.yml up container-test
@@ -146,6 +156,7 @@ FFMPEG_VERSION=test docker compose -f docker-compose.test.yml up container-test-
 ```
 
 **Windows (PowerShell):**
+
 ```powershell
 # File structure and library tests
 $env:FFMPEG_VERSION="test"; docker compose -f docker-compose.test.yml up container-test
@@ -167,12 +178,14 @@ docker build -t ragedunicorn/ffmpeg:7.1.1-alpine3.22.1-1 .
 ```
 
 **Linux/macOS:**
+
 ```bash
 # Test that specific version
 FFMPEG_VERSION=7.1.1-alpine3.22.1-1 docker compose -f docker-compose.test.yml run test-all
 ```
 
 **Windows (PowerShell):**
+
 ```powershell
 # Test that specific version
 $env:FFMPEG_VERSION="7.1.1-alpine3.22.1-1"; docker compose -f docker-compose.test.yml run test-all
@@ -217,11 +230,13 @@ docker build -t ragedunicorn/ffmpeg:test .
 ```
 
 Linux/macOS:
+
 ```bash
 FFMPEG_VERSION=test docker compose -f docker-compose.test.yml run test-all
 ```
 
 Windows (PowerShell):
+
 ```powershell
 $env:FFMPEG_VERSION="test"; docker compose -f docker-compose.test.yml run test-all
 ```

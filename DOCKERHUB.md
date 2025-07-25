@@ -34,24 +34,28 @@ docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:latest -i input.mp4 output
 ## Usage Examples
 
 ### Convert video format
+
 ```bash
 docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:latest \
   -i input.mp4 -c:v libx264 -c:a aac output.mp4
 ```
 
 ### Extract audio
+
 ```bash
 docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:latest \
   -i input.mp4 -vn -acodec mp3 output.mp3
 ```
 
 ### Resize video
+
 ```bash
 docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:latest \
   -i input.mp4 -vf scale=1280:720 output.mp4
 ```
 
 ### Create GIF from video
+
 ```bash
 docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:latest \
   -i input.mp4 -vf "fps=10,scale=320:-1" output.gif

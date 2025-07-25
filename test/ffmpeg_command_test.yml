@@ -4,7 +4,7 @@ commandTests:
   - name: 'FFmpeg version check'
     command: 'ffmpeg'
     args: ['-version']
-    expectedOutput: 
+    expectedOutput:
       - 'ffmpeg version 7.1.1'
       - 'libavutil'
       - 'libavcodec'
@@ -71,3 +71,11 @@ commandTests:
     args: ['-c', 'cd /tmp/workdir && ls']
     expectedOutput: ['test.txt']
     exitCode: 0
+
+  - name: 'Non-root user exists'
+    command: 'id'
+    args: ['ffmpeg']
+    exitCode: 0
+    expectedOutput:
+      - 'uid='
+      - 'ffmpeg'

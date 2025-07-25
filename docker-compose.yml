@@ -1,5 +1,5 @@
 # Docker Compose configuration for FFmpeg
-# 
+#
 # Usage:
 #   docker-compose run --rm ffmpeg [ffmpeg-options]
 #
@@ -30,12 +30,12 @@ services:
     network_mode: bridge
     # Uncomment below to use host networking (useful for RTMP streaming)
     # network_mode: host
-    
+
     # Environment variables (optional)
     environment:
       # Add any environment variables if needed
       - TERM=xterm-256color
-    
+
     # Resource limits (optional - uncomment to use)
     # deploy:
     #   resources:
