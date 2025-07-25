@@ -3,6 +3,7 @@
 ![](./docs/docker_ffmpeg.png)
 
 [![Release Build](https://github.com/RagedUnicorn/docker-ffmpeg/actions/workflows/docker_release.yml/badge.svg)](https://github.com/RagedUnicorn/docker-ffmpeg/actions/workflows/docker_release.yml)
+[![Test](https://github.com/RagedUnicorn/docker-ffmpeg/actions/workflows/test.yml/badge.svg)](https://github.com/RagedUnicorn/docker-ffmpeg/actions/workflows/test.yml)
 ![License: MIT](docs/license_badge.svg)
 
 > Docker Alpine image with FFmpeg and its dependencies.
