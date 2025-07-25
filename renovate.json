@@ -21,6 +21,11 @@
       "extractVersionTemplate": "^n(?<version>.*)$"
     }
   ],
+  "ignorePaths": [
+    "docker-compose.yml",
+    "docker-compose.dev.yml",
+    "docker-compose.test.yml"
+  ],
   "labels": [
     "dependencies",
     "renovate"
