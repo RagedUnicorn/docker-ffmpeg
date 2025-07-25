@@ -24,7 +24,11 @@
   "ignorePaths": [
     "docker-compose.yml",
     "docker-compose.dev.yml",
-    "docker-compose.test.yml"
+    "docker-compose.test.yml",
+    "examples/docker-compose.batch.yml",
+    "examples/docker-compose.convert.yml",
+    "examples/docker-compose.extract.yml",
+    "examples/docker-compose.stream.yml"
   ],
   "labels": [
     "dependencies",
