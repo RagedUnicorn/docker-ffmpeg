@@ -152,7 +152,9 @@ START_TIME=00:01:30 DURATION=00:00:45 docker compose -f examples/docker-compose.
 #### Streaming (`examples/docker-compose.stream.yml`)
 ```bash
 # Stream to RTMP server
-RTMP_URL=rtmp://your.server/live/ STREAM_KEY=your_key docker compose -f examples/docker-compose.stream.yml run --rm rtmp-stream
+# Use environment variables or secret management tools
+# Example: export STREAM_KEY="your-actual-key" before running
+RTMP_URL=rtmp://your.server/live/ STREAM_KEY=${STREAM_KEY} docker compose -f examples/docker-compose.stream.yml run --rm rtmp-stream
 
 # Create HLS stream
 docker compose -f examples/docker-compose.stream.yml run --rm hls-stream

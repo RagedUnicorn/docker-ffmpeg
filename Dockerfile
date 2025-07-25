@@ -140,11 +140,18 @@ RUN apk add --no-cache --update \
 RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories && \
     apk add --no-cache --update fdk-aac
 
+# Create non-root user for running FFmpeg
+RUN adduser -D -H -s /sbin/nologin ffmpeg
+
 # Copy FFmpeg binaries from build stage
 COPY --from=build ${PREFIX}/bin/* /usr/local/bin/
 
 # Create working directory for input/output files
 WORKDIR /tmp/workdir
+
+RUN chown -R ffmpeg:ffmpeg /tmp/workdir
+
+USER ffmpeg
 
 # Set the entrypoint to ffmpeg binary
 ENTRYPOINT ["ffmpeg"]

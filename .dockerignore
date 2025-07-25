@@ -1,9 +1,11 @@
 # Git files
 .git
 .gitignore
+.gitattributes
 
 # Documentation
 README.md
+TEST.md
 LICENSE
 docs/
 
@@ -28,3 +30,8 @@ tests/
 .github/
 .gitlab-ci.yml
 .travis.yml
+
+# Environment files with secrets
+.env
+.env.local
+.env.*.local
