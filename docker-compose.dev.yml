@@ -11,7 +11,7 @@
 services:
   ffmpeg-dev:
     build: .
-    image: ragedunicorn/ffmpeg:${FFMPEG_VERSION:-latest}-dev
+    image: ragedunicorn/ffmpeg:dev
     volumes:
       - ./media:/tmp/workdir
     working_dir: /tmp/workdir
