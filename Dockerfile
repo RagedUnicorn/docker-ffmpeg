@@ -1,7 +1,7 @@
 ############################################
 # FFmpeg build stage
 ############################################
-FROM alpine:3.22.2 AS build
+FROM alpine:3.23.0 AS build
 
 ARG FFMPEG_VERSION=7.1.1
 ARG PREFIX=/opt/ffmpeg
@@ -93,7 +93,7 @@ RUN cd ${PREFIX}/bin && \
 ############################################
 # Runtime stage
 ############################################
-FROM alpine:3.22.2
+FROM alpine:3.23.0
 
 ARG PREFIX=/opt/ffmpeg
 ARG BUILD_DATE
