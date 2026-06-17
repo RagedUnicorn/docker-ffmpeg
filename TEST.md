@@ -195,16 +195,14 @@ $env:FFMPEG_VERSION="7.1.1-alpine3.22.1-1"; docker compose -f docker-compose.tes
 
 ### Library Version Mismatches
 
-Alpine Linux uses versioned shared libraries (e.g., `libx264.so.164` instead of `libx264.so`). When codec libraries are updated, the test file `test/ffmpeg_test.yml` may need to be updated with the new version numbers.
+Alpine Linux uses versioned shared libraries (e.g., `libx264.so.164` instead of `libx264.so`), and the SONAME version changes on Alpine bumps. To avoid breaking on every update, `test/ffmpeg_test.yml` checks codec libraries with version-agnostic globs (`ls /usr/lib/libx264.so.*`) instead of hardcoded paths, so no manual version updates are needed. Functional codec coverage lives in `test/ffmpeg_command_test.yml`, which verifies the encoders by name.
 
-To find the current library versions in the image:
+To inspect the current library versions in the image:
 
 ```bash
 docker run --rm --entrypoint sh ragedunicorn/ffmpeg:latest -c \
   "find /usr/lib -name '*.so*' | grep -E '(x264|opus|mp3lame|vpx|x265)' | sort"
 ```
-
-Then update the paths in `test/ffmpeg_test.yml` accordingly.
 
 ### Metadata Test Failures
 
