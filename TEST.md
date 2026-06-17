@@ -221,6 +221,12 @@ docker run --rm --entrypoint sh ragedunicorn/ffmpeg:latest -c \
    - The `org.opencontainers.image.version` label changes with each build
    - Build date labels are dynamic
 
+4. **Alpine base image drift**
+   - `test/ffmpeg_metadata_test.yml` asserts `org.opencontainers.image.base.name` (e.g. `docker.io/library/alpine:X.X.X`)
+   - This value must match the `FROM alpine:X.X.X` lines and the `base.name` label in the Dockerfile
+   - Renovate keeps all three in sync: the Alpine version in the metadata test and the Dockerfile label are tracked by regex custom managers, so they bump together with the `FROM` lines in a single `alpine` PR and no longer drift apart
+   - If you bump Alpine manually, update the metadata test value in the same change
+
 **Solution:** Always build and test locally before pushing:
 
 ```bash
@@ -305,7 +311,7 @@ The `test-all` service returns:
 When updating the Docker image:
 
 1. **FFmpeg version updates**: Usually no test changes needed
-2. **Alpine version updates**: May require library version updates in tests
+2. **Alpine version updates**: May require library version updates in tests; the Alpine version in `test/ffmpeg_metadata_test.yml` is kept in sync with the Dockerfile by Renovate (same `alpine` dependency bumps everywhere together)
 3. **New codec additions**: Add corresponding tests to verify functionality
 4. **Label changes**: Update metadata tests to match new labels
 

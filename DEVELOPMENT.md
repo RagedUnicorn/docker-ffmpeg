@@ -131,6 +131,14 @@ This project uses [Renovate](https://docs.renovatebot.com/) to automatically man
 - **FFmpeg**: Renovate monitors GitHub releases and creates PRs for new versions
 - **Alpine Linux**: Renovate monitors Docker Hub and creates PRs for new Alpine versions
 
+The Alpine version is referenced in several places that must stay aligned:
+
+- The two `FROM alpine:X.X.X` lines in the Dockerfile (tracked by Renovate's built-in Dockerfile manager)
+- The `org.opencontainers.image.base.name` OCI label in the Dockerfile (tracked by a regex custom manager)
+- The Alpine version asserted in `test/ffmpeg_metadata_test.yml` (tracked by a regex custom manager)
+
+All of these resolve to the same `alpine` dependency at the same version, so Renovate bumps them together in a single PR — the base image, the label, and the metadata test no longer drift apart. No manual sync step is required.
+
 When Renovate creates a PR:
 
 1. Review the changes in the PR
@@ -151,10 +159,12 @@ FROM alpine:3.22.1
 When manually updating versions:
 
 1. Update the `FROM alpine:X.X.X` lines in the Dockerfile (both build and runtime stages)
-2. Update `ARG FFMPEG_VERSION=X.X.X` in the Dockerfile
-3. Test the build thoroughly - library versions may have changed
-4. Update library versions in `test/ffmpeg_test.yml` if needed
-5. Update version numbers in documentation
+2. Update the `org.opencontainers.image.base.name` label in the Dockerfile to the same Alpine version
+3. Update the Alpine version asserted in `test/ffmpeg_metadata_test.yml` to match
+4. Update `ARG FFMPEG_VERSION=X.X.X` in the Dockerfile
+5. Test the build thoroughly - library versions may have changed
+6. Update library versions in `test/ffmpeg_test.yml` if needed
+7. Update version numbers in documentation
 
 ### Adding New Codecs
 
