@@ -31,6 +31,7 @@ jobs:
       - name: Run File Structure Tests
         id: file-tests
         continue-on-error: true
+        shell: bash
         env:
           FFMPEG_VERSION: test
         run: |
@@ -40,6 +41,7 @@ jobs:
       - name: Run Command Execution Tests
         id: command-tests
         continue-on-error: true
+        shell: bash
         env:
           FFMPEG_VERSION: test
         run: |
@@ -49,6 +51,7 @@ jobs:
       - name: Run Metadata Tests
         id: metadata-tests
         continue-on-error: true
+        shell: bash
         env:
           FFMPEG_VERSION: test
         run: |
