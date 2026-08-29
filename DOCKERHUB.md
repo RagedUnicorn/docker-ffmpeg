@@ -1,6 +1,6 @@
 # FFmpeg Alpine Docker Image
 
-![Docker FFmpeg](https://raw.githubusercontent.com/RagedUnicorn/docker-ffmpeg/master/docs/docker_ffmpeg.png)
+![Docker FFmpeg](https://raw.githubusercontent.com/RagedUnicorn/docker-ffmpeg/master/docs/docker_ffmpeg_banner.png)
 
 A lightweight FFmpeg build on Alpine Linux with extensive codec support for versatile media processing.
 
