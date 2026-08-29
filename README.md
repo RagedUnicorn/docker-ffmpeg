@@ -1,6 +1,6 @@
 # docker-ffmpeg
 
-![](./docs/docker_ffmpeg.png)
+![](./docs/docker_ffmpeg_banner.svg)
 
 [![Release Build](https://github.com/RagedUnicorn/docker-ffmpeg/actions/workflows/docker_release.yml/badge.svg)](https://github.com/RagedUnicorn/docker-ffmpeg/actions/workflows/docker_release.yml)
 [![Test](https://github.com/RagedUnicorn/docker-ffmpeg/actions/workflows/test.yml/badge.svg)](https://github.com/RagedUnicorn/docker-ffmpeg/actions/workflows/test.yml)
