@@ -38,7 +38,7 @@ This Docker image provides a lightweight FFmpeg installation built from source o
 
 ### Additional Features
 - Subtitles (libass)
-- Text rendering (libfreetype)
+- Text rendering with `drawtext` (libfreetype, libharfbuzz, libfontconfig, DejaVu fonts)
 - WebP support (libwebp)
 - RTMP streaming (librtmp)
 - SSL/TLS support (openssl)

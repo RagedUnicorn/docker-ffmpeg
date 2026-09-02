@@ -29,7 +29,7 @@ docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:latest -i input.mp4 output
 
 **Video**: H.264 (libx264), H.265/HEVC (libx265), VP8/VP9 (libvpx), Theora  
 **Audio**: AAC (libfdk-aac), MP3 (libmp3lame), Opus, Vorbis  
-**Other**: WebP support, RTMP streaming, SSL/TLS, Subtitles (libass)
+**Other**: WebP support, RTMP streaming, SSL/TLS, Subtitles (libass), Text rendering with `drawtext` (DejaVu fonts included)
 
 ## Usage Examples
 
