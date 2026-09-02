@@ -18,10 +18,12 @@ RUN apk add --no-cache --update \
     build-base \
     cmake \
     coreutils \
+    fontconfig-dev \
     freetype-dev \
     g++ \
     gcc \
     git \
+    harfbuzz-dev \
     lame-dev \
     libogg-dev \
     libass \
@@ -73,6 +75,8 @@ RUN cd /tmp/ffmpeg-${FFMPEG_VERSION} && \
     --enable-libass \
     --enable-libwebp \
     --enable-libfreetype \
+    --enable-libharfbuzz \
+    --enable-libfontconfig \
     --enable-librtmp \
     --enable-postproc \
     --enable-openssl \
@@ -129,6 +133,9 @@ RUN apk add --no-cache --update \
     libwebpmux \
     libwebpdemux \
     freetype \
+    harfbuzz \
+    fontconfig \
+    font-dejavu \
     libxcb \
     xcb-util \
     xcb-util-image \
@@ -140,8 +147,10 @@ RUN apk add --no-cache --update \
 RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories && \
     apk add --no-cache --update fdk-aac
 
-# Create non-root user for running FFmpeg
-RUN adduser -D -H -s /sbin/nologin ffmpeg
+# Create non-root user for running FFmpeg. A home directory is created
+# deliberately (no -H): fontconfig, which drawtext resolves font names through,
+# wants a writable cache directory and warns on every run without one.
+RUN adduser -D -s /sbin/nologin ffmpeg
 
 # Copy FFmpeg binaries from build stage
 COPY --from=build ${PREFIX}/bin/* /usr/local/bin/

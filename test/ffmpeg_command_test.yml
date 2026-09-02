@@ -65,6 +65,38 @@ commandTests:
       - 'subtitles'
     exitCode: 0
 
+  # drawtext needs libfreetype, libharfbuzz and libfontconfig together since
+  # FFmpeg 7. With freetype alone the build still succeeds and -buildconf still
+  # advertises --enable-libfreetype, but configure drops the filter, so the only
+  # symptom is "No such filter: 'drawtext'" at run time
+  - name: 'Check drawtext filter is present'
+    command: 'ffmpeg'
+    args: ['-filters']
+    expectedOutput:
+      - 'drawtext'
+    exitCode: 0
+
+  - name: 'Check text rendering libraries are enabled'
+    command: 'ffmpeg'
+    args: ['-buildconf']
+    expectedOutput:
+      - 'enable-libfreetype'
+      - 'enable-libharfbuzz'
+      - 'enable-libfontconfig'
+    exitCode: 0
+
+  # The functional proof. A filter can be listed and still fail at run time when
+  # the image has no font file, and drawtext resolves its default font=Sans
+  # through fontconfig, so this covers the font package as well as the filter
+  - name: 'Render text into a frame'
+    command: 'sh'
+    args:
+      - '-c'
+      - 'ffmpeg -y -loglevel error -f lavfi -i color=c=white:s=320x80 -vf "drawtext=text=RagedUnicorn:fontcolor=black:fontsize=24:x=10:y=10" -frames:v 1 /tmp/workdir/drawtext.png && ffprobe -v error -show_entries stream=width,height -of csv=p=0 /tmp/workdir/drawtext.png'
+    expectedOutput:
+      - '320,80'
+    exitCode: 0
+
   - name: 'Test simple conversion command'
     setup: [['sh', '-c', 'echo "test" > /tmp/workdir/test.txt']]
     command: 'sh'
