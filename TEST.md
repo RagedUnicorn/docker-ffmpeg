@@ -32,7 +32,7 @@ Validates:
 Validates:
 
 - FFmpeg and FFprobe version outputs
-- Video encoder support (H.264, H.265, VP9, Theora)
+- Video encoder support (H.264, H.265, VP9, Theora, AV1)
 - Audio encoder support (MP3, Opus, Vorbis, AAC)
 - Protocol support (HTTPS, TLS, RTMP)
 - Filter support (scale, overlay, subtitles)
@@ -174,21 +174,21 @@ When testing different versions, always build locally first:
 
 ```bash
 # Build a specific version locally
-docker build -t ragedunicorn/ffmpeg:7.1.1-alpine3.22.1-1 .
+docker build -t ragedunicorn/ffmpeg:7.1.5-alpine3.24.1-1 .
 ```
 
 **Linux/macOS:**
 
 ```bash
 # Test that specific version
-FFMPEG_VERSION=7.1.1-alpine3.22.1-1 docker compose -f docker-compose.test.yml run test-all
+FFMPEG_VERSION=7.1.5-alpine3.24.1-1 docker compose -f docker-compose.test.yml run test-all
 ```
 
 **Windows (PowerShell):**
 
 ```powershell
 # Test that specific version
-$env:FFMPEG_VERSION="7.1.1-alpine3.22.1-1"; docker compose -f docker-compose.test.yml run test-all
+$env:FFMPEG_VERSION="7.1.5-alpine3.24.1-1"; docker compose -f docker-compose.test.yml run test-all
 ```
 
 ## Troubleshooting Test Failures

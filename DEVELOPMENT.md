@@ -66,10 +66,10 @@ docker build -t ragedunicorn/ffmpeg:dev .
 
 # Build with specific versions
 docker build \
-  --build-arg FFMPEG_VERSION=7.1.1 \
+  --build-arg FFMPEG_VERSION=7.1.5 \
   --build-arg BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ') \
-  --build-arg VERSION=7.1.1-alpine3.22.1-1 \
-  -t ragedunicorn/ffmpeg:7.1.1-alpine3.22.1-1 .
+  --build-arg VERSION=7.1.5-alpine3.24.1-1 \
+  -t ragedunicorn/ffmpeg:7.1.5-alpine3.24.1-1 .
 
 # Multi-platform build (requires buildx)
 docker buildx build \
@@ -150,10 +150,10 @@ Manual version updates are rarely needed, but if required:
 
 ```dockerfile
 # FFmpeg version
-ARG FFMPEG_VERSION=7.1.1
+ARG FFMPEG_VERSION=7.1.5
 
 # Alpine base image
-FROM alpine:3.22.1
+FROM alpine:3.24.1
 ```
 
 When manually updating versions:

@@ -16,9 +16,9 @@ This Docker image provides a lightweight FFmpeg installation built from source o
 
 ## Features
 
-- **Small footprint**: ~70-80MB runtime image using Alpine Linux
-- **FFmpeg 7.1.1**: Latest stable version compiled from source
-- **Extensive codec support**: x264, x265, VP9, Opus, MP3, AAC, and more
+- **Small footprint**: ~55MB compressed (~190MB on disk) runtime image using Alpine Linux
+- **FFmpeg 7.1.5**: Latest stable version compiled from source
+- **Extensive codec support**: x264, x265, VP9, AV1, Opus, MP3, AAC, and more
 - **Multi-stage build**: Optimized for minimal final image size
 - **Volume mounting**: Easy file input/output through `/tmp/workdir`
 
@@ -28,6 +28,7 @@ This Docker image provides a lightweight FFmpeg installation built from source o
 - H.264 (libx264)
 - H.265/HEVC (libx265)
 - VP8/VP9 (libvpx)
+- AV1 (libaom, libsvtav1; decoding via libdav1d)
 - Theora (libtheora)
 
 ### Audio Codecs
@@ -40,6 +41,7 @@ This Docker image provides a lightweight FFmpeg installation built from source o
 - Subtitles (libass)
 - Text rendering with `drawtext` (libfreetype, libharfbuzz, libfontconfig, DejaVu fonts)
 - WebP support (libwebp)
+- AVIF image output (via libaom)
 - RTMP streaming (librtmp)
 - SSL/TLS support (openssl)
 
@@ -66,10 +68,10 @@ The container uses FFmpeg as the entrypoint, so any FFmpeg parameters can be pas
 docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:latest [ffmpeg-options]
 
 # Using specific FFmpeg version (latest Alpine build)
-docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:7.1.1 [ffmpeg-options]
+docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:7.1.5 [ffmpeg-options]
 
 # Using exact version combination
-docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:7.1.1-alpine3.22.0-1 [ffmpeg-options]
+docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:7.1.5-alpine3.24.1-1 [ffmpeg-options]
 ```
 
 ### Examples
@@ -102,6 +104,16 @@ docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:latest -i input.mp4 -c:v l
 #### Create GIF from Video
 ```bash
 docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:latest -i input.mp4 -vf "fps=10,scale=320:-1" output.gif
+```
+
+#### Convert Image to AVIF
+```bash
+docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:latest -i input.png -c:v libaom-av1 -still-picture 1 output.avif
+```
+
+#### Encode AV1 Video
+```bash
+docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:latest -i input.mp4 -c:v libsvtav1 -preset 6 -crf 32 -c:a libopus output.mkv
 ```
 
 ## Docker Compose Usage
@@ -195,7 +207,7 @@ Many compose services support environment variables for customization:
 
 3. **Persistent Settings**: The repository includes a `.env` file with default settings. You can modify it to set your preferred versions:
    ```env
-   FFMPEG_VERSION=7.1.1-alpine3.22.1-1
+   FFMPEG_VERSION=7.1.5-alpine3.24.1-1
    RTMP_URL=rtmp://streaming.server/live/
    ```
 
@@ -206,7 +218,7 @@ This project uses semantic versioning that matches the Docker image contents:
 **Format:** `{ffmpeg_version}-alpine{alpine_version}-{build_number}`
 
 Examples:
-- `7.1.1-alpine3.22.0-1` - FFmpeg 7.1.1 on Alpine 3.22.0, build 1
+- `7.1.5-alpine3.24.1-1` - FFmpeg 7.1.5 on Alpine 3.24.1, build 1
 - `latest` - Most recent stable release
 
 For detailed release process and versioning guidelines, see [RELEASE.md](RELEASE.md).

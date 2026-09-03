@@ -11,7 +11,7 @@ A lightweight FFmpeg build on Alpine Linux with extensive codec support for vers
 docker pull ragedunicorn/ffmpeg:latest
 
 # Or pull specific version
-docker pull ragedunicorn/ffmpeg:7.1.1-alpine3.22.0-1
+docker pull ragedunicorn/ffmpeg:7.1.5-alpine3.24.1-1
 
 # Run FFmpeg
 docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:latest -i input.mp4 output.mp4
@@ -19,17 +19,17 @@ docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:latest -i input.mp4 output
 
 ## Features
 
-- 🚀 **Small footprint**: ~70-80MB runtime image
-- 📦 **FFmpeg 7.1.1**: Latest stable version compiled from source
-- 🎥 **Extensive codec support**: H.264, H.265/HEVC, VP8/VP9, MP3, AAC, Opus, and more
+- 🚀 **Small footprint**: ~55MB compressed (~190MB on disk) runtime image
+- 📦 **FFmpeg 7.1.5**: Latest stable version compiled from source
+- 🎥 **Extensive codec support**: H.264, H.265/HEVC, VP8/VP9, AV1, MP3, AAC, Opus, and more
 - 🏗️ **Multi-platform**: Supports linux/amd64 and linux/arm64
 - 🔧 **Optimized build**: Multi-stage Docker build for minimal size
 
 ## Supported Codecs
 
-**Video**: H.264 (libx264), H.265/HEVC (libx265), VP8/VP9 (libvpx), Theora  
+**Video**: H.264 (libx264), H.265/HEVC (libx265), VP8/VP9 (libvpx), AV1 (libaom, libsvtav1, libdav1d), Theora  
 **Audio**: AAC (libfdk-aac), MP3 (libmp3lame), Opus, Vorbis  
-**Other**: WebP support, RTMP streaming, SSL/TLS, Subtitles (libass), Text rendering with `drawtext` (DejaVu fonts included)
+**Other**: WebP support, AVIF output, RTMP streaming, SSL/TLS, Subtitles (libass), Text rendering with `drawtext` (DejaVu fonts included)
 
 ## Usage Examples
 
@@ -52,6 +52,13 @@ docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:latest \
 ```bash
 docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:latest \
   -i input.mp4 -vf scale=1280:720 output.mp4
+```
+
+### Convert image to AVIF
+
+```bash
+docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:latest \
+  -i input.png -c:v libaom-av1 -still-picture 1 output.avif
 ```
 
 ### Create GIF from video
