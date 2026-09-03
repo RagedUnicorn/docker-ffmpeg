@@ -13,11 +13,14 @@ LABEL org.opencontainers.image.authors="Michael Wiesendanger <michael.wiesendang
       org.opencontainers.image.source="https://github.com/RagedUnicorn/docker-ffmpeg" \
       org.opencontainers.image.licenses="MIT"
 
-# Install build dependencies
+# Install build dependencies. The AV1 libraries (aom, svt-av1, dav1d) need
+# FFmpeg >= 7.1.4: older 7.1.x releases do not compile against SVT-AV1 3.x/4.x
 RUN apk add --no-cache --update \
+    aom-dev \
     build-base \
     cmake \
     coreutils \
+    dav1d-dev \
     fontconfig-dev \
     freetype-dev \
     g++ \
@@ -40,6 +43,7 @@ RUN apk add --no-cache --update \
     pkgconf \
     pkgconfig \
     rtmpdump-dev \
+    svt-av1-dev \
     wget \
     x264-dev \
     x265-dev \
@@ -69,6 +73,9 @@ RUN cd /tmp/ffmpeg-${FFMPEG_VERSION} && \
     --enable-libx265 \
     --enable-libvpx \
     --enable-libtheora \
+    --enable-libaom \
+    --enable-libsvtav1 \
+    --enable-libdav1d \
     --enable-libvorbis \
     --enable-libopus \
     --enable-libfdk-aac \
@@ -128,6 +135,9 @@ RUN apk add --no-cache --update \
     rtmpdump \
     x264-libs \
     x265-libs \
+    aom-libs \
+    svt-av1 \
+    libdav1d \
     libass \
     libwebp \
     libwebpmux \

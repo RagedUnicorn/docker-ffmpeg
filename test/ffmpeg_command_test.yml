@@ -27,6 +27,47 @@ commandTests:
       - 'libvpx'
       - 'libvpx-vp9'
       - 'libtheora'
+      - 'libaom-av1'
+      - 'libsvtav1'
+    exitCode: 0
+
+  - name: 'Check AV1 decoder is present'
+    command: 'ffmpeg'
+    args: ['-decoders']
+    expectedOutput:
+      - 'libdav1d'
+    exitCode: 0
+
+  - name: 'Check AV1 libraries are enabled'
+    command: 'ffmpeg'
+    args: ['-buildconf']
+    expectedOutput:
+      - 'enable-libaom'
+      - 'enable-libsvtav1'
+      - 'enable-libdav1d'
+    exitCode: 0
+
+  # AVIF is AV1 in a HEIF container, so this is the use case that first exposed
+  # the missing encoder. libaom is the encoder that supports still-picture mode
+  - name: 'Encode a still image to AVIF'
+    command: 'sh'
+    args:
+      - '-c'
+      - 'ffmpeg -y -loglevel error -f lavfi -i color=c=red:s=64x64 -frames:v 1 -c:v libaom-av1 -still-picture 1 /tmp/workdir/still.avif && ffprobe -v error -show_entries stream=codec_name -of csv=p=0 /tmp/workdir/still.avif'
+    expectedOutput:
+      - 'av1'
+    exitCode: 0
+
+  # Round trip through the two remaining AV1 libraries: encode with SVT-AV1 and
+  # decode the result with dav1d. 320x240 stays above SVT-AV1's minimum
+  # dimensions and preset 12 keeps the encode fast
+  - name: 'Encode AV1 video with SVT-AV1 and decode it with dav1d'
+    command: 'sh'
+    args:
+      - '-c'
+      - 'ffmpeg -y -loglevel error -f lavfi -i testsrc=size=320x240:rate=10 -frames:v 10 -c:v libsvtav1 -preset 12 /tmp/workdir/av1.mkv && ffmpeg -v error -c:v libdav1d -i /tmp/workdir/av1.mkv -f null - && echo decoded-ok'
+    expectedOutput:
+      - 'decoded-ok'
     exitCode: 0
 
   - name: 'List audio encoders'

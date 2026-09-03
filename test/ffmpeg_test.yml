@@ -51,3 +51,18 @@ commandTests:
     command: 'sh'
     args: ['-c', 'ls /usr/lib/libmp3lame.so.*']
     exitCode: 0
+
+  - name: 'libaom shared library present'
+    command: 'sh'
+    args: ['-c', 'ls /usr/lib/libaom.so.*']
+    exitCode: 0
+
+  - name: 'libSvtAv1Enc shared library present'
+    command: 'sh'
+    args: ['-c', 'ls /usr/lib/libSvtAv1Enc.so.*']
+    exitCode: 0
+
+  - name: 'libdav1d shared library present'
+    command: 'sh'
+    args: ['-c', 'ls /usr/lib/libdav1d.so.*']
+    exitCode: 0

@@ -68,7 +68,7 @@ jobs:
             docker run --rm ragedunicorn/ffmpeg:test -version
             echo ""
             echo "Testing available codecs..."
-            docker run --rm ragedunicorn/ffmpeg:test -codecs 2>&1 | grep -E "(h264|h265|opus|mp3|vp9)" | head -10
+            docker run --rm ragedunicorn/ffmpeg:test -codecs 2>&1 | grep -E "(h264|h265|opus|mp3|vp9|av1)" | head -10
           } 2>&1 | tee test-basic-functionality.log
           echo "::endgroup::"
       - name: Generate Test Summary
