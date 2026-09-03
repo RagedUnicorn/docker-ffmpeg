@@ -5,7 +5,7 @@ commandTests:
     command: 'ffmpeg'
     args: ['-version']
     expectedOutput:
-      - 'ffmpeg version 7.1.1'
+      - 'ffmpeg version 7.1.5'
       - 'libavutil'
       - 'libavcodec'
       - 'libavformat'
@@ -15,7 +15,7 @@ commandTests:
     command: 'ffprobe'
     args: ['-version']
     expectedOutput:
-      - 'ffprobe version 7.1.1'
+      - 'ffprobe version 7.1.5'
     exitCode: 0
 
   - name: 'List video encoders'

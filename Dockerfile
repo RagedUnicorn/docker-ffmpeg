@@ -3,7 +3,7 @@
 ############################################
 FROM alpine:3.24.1 AS build
 
-ARG FFMPEG_VERSION=7.1.1
+ARG FFMPEG_VERSION=7.1.5
 ARG PREFIX=/opt/ffmpeg
 ARG LD_LIBRARY_PATH=/opt/ffmpeg/lib
 ARG MAKEFLAGS="-j4"
