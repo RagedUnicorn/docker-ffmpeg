@@ -32,7 +32,7 @@ This Docker image provides a lightweight FFmpeg installation built from source o
 - Theora (libtheora)
 
 ### Audio Codecs
-- AAC (libfdk-aac)
+- AAC (FFmpeg native `aac` encoder)
 - MP3 (libmp3lame)
 - Opus (libopus)
 - Vorbis (libvorbis)
@@ -244,6 +244,10 @@ both Alpine Linux and FFmpeg releases, creating separate pull requests for each 
 - [Alpine Linux](https://www.alpinelinux.org/)
 
 # License
+
+The FFmpeg binaries shipped in the image are built with `--enable-gpl --enable-version3` and are licensed under GPL-3.0-or-later. No non-free components (such as libfdk-aac) are included, so the image can be redistributed. See [FFmpeg License and Legal Considerations](https://ffmpeg.org/legal.html).
+
+The contents of this repository (Dockerfile, tests, documentation) are licensed under the MIT License:
 
 MIT License
 

@@ -77,6 +77,10 @@ commandTests:
       - 'libmp3lame'
       - 'libopus'
       - 'libvorbis'
+      # Native AAC encoder; --enable-small strips the description column
+      - 'A\.{4}D aac '
+    # The image must stay redistributable: no non-free encoders
+    excludedOutput:
       - 'libfdk_aac'
     exitCode: 0
 

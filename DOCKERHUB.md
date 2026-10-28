@@ -28,7 +28,7 @@ docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:latest -i input.mp4 output
 ## Supported Codecs
 
 **Video**: H.264 (libx264), H.265/HEVC (libx265), VP8/VP9 (libvpx), AV1 (libaom, libsvtav1, libdav1d), Theora  
-**Audio**: AAC (libfdk-aac), MP3 (libmp3lame), Opus, Vorbis  
+**Audio**: AAC (native `aac` encoder), MP3 (libmp3lame), Opus, Vorbis  
 **Other**: WebP support, AVIF output, RTMP streaming, SSL/TLS, Subtitles (libass), Text rendering with `drawtext` (DejaVu fonts included)
 
 ## Usage Examples
@@ -91,4 +91,6 @@ When updates are available through automated dependency management, new releases
 
 ## License
 
-MIT License - See [GitHub repository](https://github.com/RagedUnicorn/docker-ffmpeg) for details.
+The repository (Dockerfile, tests, docs) is MIT licensed - See [GitHub repository](https://github.com/RagedUnicorn/docker-ffmpeg) for details.
+
+The FFmpeg binaries in the image are built with `--enable-gpl --enable-version3` and are licensed under GPL-3.0-or-later. No non-free components are included. See [FFmpeg License and Legal Considerations](https://ffmpeg.org/legal.html).

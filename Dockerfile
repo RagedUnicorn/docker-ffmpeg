@@ -52,10 +52,6 @@ RUN apk add --no-cache --update \
     yasm \
     zlib-dev
 
-# Get fdk-aac from community repository
-RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories && \
-    apk add --no-cache --update fdk-aac-dev
-
 # Download the FFmpeg source and verify its GPG signature before extracting.
 # The release key is fetched from ffmpeg.org (the same host as the tarball), so
 # the signature is only accepted if it was made by the pinned key fingerprint
@@ -71,13 +67,14 @@ RUN cd /tmp && \
     tar -xzf ffmpeg.tar.gz && \
     rm ffmpeg.tar.gz
 
-# Configure and compile FFmpeg
+# Configure and compile FFmpeg. No --enable-nonfree: a GPL build linked against
+# non-free libraries (such as libfdk-aac) may not be redistributed, and this
+# image is published. The native "aac" encoder covers AAC output instead
 RUN cd /tmp/ffmpeg-${FFMPEG_VERSION} && \
     ./configure \
     --prefix=${PREFIX} \
     --enable-version3 \
     --enable-gpl \
-    --enable-nonfree \
     --enable-small \
     --enable-libmp3lame \
     --enable-libx264 \
@@ -89,7 +86,6 @@ RUN cd /tmp/ffmpeg-${FFMPEG_VERSION} && \
     --enable-libdav1d \
     --enable-libvorbis \
     --enable-libopus \
-    --enable-libfdk-aac \
     --enable-libass \
     --enable-libwebp \
     --enable-libfreetype \
@@ -121,14 +117,15 @@ ARG PREFIX=/opt/ffmpeg
 ARG BUILD_DATE
 ARG VERSION
 
-# OCI-compliant labels
+# OCI-compliant labels. The licenses label describes the shipped binaries, not
+# the repository (MIT): --enable-gpl with --enable-version3 makes FFmpeg GPLv3+
 LABEL org.opencontainers.image.title="FFmpeg on Alpine Linux" \
       org.opencontainers.image.description="Lightweight FFmpeg Docker image with comprehensive codec support built on Alpine Linux" \
       org.opencontainers.image.vendor="ragedunicorn" \
       org.opencontainers.image.authors="Michael Wiesendanger <michael.wiesendanger@gmail.com>" \
       org.opencontainers.image.source="https://github.com/RagedUnicorn/docker-ffmpeg" \
       org.opencontainers.image.documentation="https://github.com/RagedUnicorn/docker-ffmpeg/blob/master/README.md" \
-      org.opencontainers.image.licenses="MIT" \
+      org.opencontainers.image.licenses="GPL-3.0-or-later" \
       org.opencontainers.image.version="${VERSION}" \
       org.opencontainers.image.created="${BUILD_DATE}" \
       org.opencontainers.image.base.name="docker.io/library/alpine:3.24.3"
@@ -163,10 +160,6 @@ RUN apk add --no-cache --update \
     xcb-util-keysyms \
     xcb-util-renderutil \
     xcb-util-wm
-
-# Get fdk-aac runtime library from community repository
-RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories && \
-    apk add --no-cache --update fdk-aac
 
 # Create non-root user for running FFmpeg. A home directory is created
 # deliberately (no -H): fontconfig, which drawtext resolves font names through,

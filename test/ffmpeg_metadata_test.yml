@@ -12,7 +12,7 @@ metadataTest:
     - key: 'org.opencontainers.image.documentation'
       value: 'https://github.com/RagedUnicorn/docker-ffmpeg/blob/master/README.md'
     - key: 'org.opencontainers.image.licenses'
-      value: 'MIT'
+      value: 'GPL-3.0-or-later'
     - key: 'org.opencontainers.image.base.name'
       value: 'docker.io/library/alpine:3.24.3'
 
