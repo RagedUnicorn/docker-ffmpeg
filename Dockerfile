@@ -4,6 +4,7 @@
 FROM alpine:3.24.3 AS build
 
 ARG FFMPEG_VERSION=7.1.5
+ARG FFMPEG_GPG_FINGERPRINT=FCF986EA15E6E293A5644F10B4322F04D67658D8
 ARG PREFIX=/opt/ffmpeg
 ARG LD_LIBRARY_PATH=/opt/ffmpeg/lib
 ARG MAKEFLAGS="-j4"
@@ -26,6 +27,7 @@ RUN apk add --no-cache --update \
     g++ \
     gcc \
     git \
+    gnupg \
     harfbuzz-dev \
     lame-dev \
     libogg-dev \
@@ -54,9 +56,18 @@ RUN apk add --no-cache --update \
 RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories && \
     apk add --no-cache --update fdk-aac-dev
 
-# Download FFmpeg source
+# Download the FFmpeg source and verify its GPG signature before extracting.
+# The release key is fetched from ffmpeg.org (the same host as the tarball), so
+# the signature is only accepted if it was made by the pinned key fingerprint
 RUN cd /tmp && \
     wget -O ffmpeg.tar.gz https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.gz && \
+    wget -O ffmpeg.tar.gz.asc https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.gz.asc && \
+    wget -O ffmpeg-devel.asc https://ffmpeg.org/ffmpeg-devel.asc && \
+    export GNUPGHOME="$(mktemp -d)" && \
+    gpg --batch --import ffmpeg-devel.asc && \
+    gpg --batch --status-fd 1 --verify ffmpeg.tar.gz.asc ffmpeg.tar.gz \
+        | grep -q "^\[GNUPG:\] VALIDSIG .* ${FFMPEG_GPG_FINGERPRINT}$" && \
+    rm -rf "${GNUPGHOME}" ffmpeg.tar.gz.asc ffmpeg-devel.asc && \
     tar -xzf ffmpeg.tar.gz && \
     rm ffmpeg.tar.gz
 
