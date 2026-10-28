@@ -15,7 +15,10 @@ LABEL org.opencontainers.image.authors="Michael Wiesendanger <michael.wiesendang
       org.opencontainers.image.licenses="MIT"
 
 # Install build dependencies. The AV1 libraries (aom, svt-av1, dav1d) need
-# FFmpeg >= 7.1.4: older 7.1.x releases do not compile against SVT-AV1 3.x/4.x
+# FFmpeg >= 7.1.4: older 7.1.x releases do not compile against SVT-AV1 3.x/4.x.
+# libxcb-dev and linux-headers are what configure autodetects the x11grab and
+# v4l2 capture devices from. Other -dev packages pull both in today, but they are
+# listed explicitly so the capture devices do not vanish silently with them
 RUN apk add --no-cache --update \
     aom-dev \
     build-base \
@@ -37,6 +40,8 @@ RUN apk add --no-cache --update \
     libvorbis-dev \
     libvpx-dev \
     libwebp-dev \
+    libxcb-dev \
+    linux-headers \
     nasm \
     openssl \
     openssl-dev \
@@ -130,7 +135,8 @@ LABEL org.opencontainers.image.title="FFmpeg on Alpine Linux" \
       org.opencontainers.image.created="${BUILD_DATE}" \
       org.opencontainers.image.base.name="docker.io/library/alpine:3.24.3"
 
-# Install runtime dependencies only
+# Install runtime dependencies only. libxcb is the only X11 package the x11grab
+# device needs: it ships libxcb plus the shm, shape and xfixes extensions
 RUN apk add --no-cache --update \
     ca-certificates \
     openssl \
@@ -154,12 +160,7 @@ RUN apk add --no-cache --update \
     harfbuzz \
     fontconfig \
     font-dejavu \
-    libxcb \
-    xcb-util \
-    xcb-util-image \
-    xcb-util-keysyms \
-    xcb-util-renderutil \
-    xcb-util-wm
+    libxcb
 
 # Create non-root user for running FFmpeg. A home directory is created
 # deliberately (no -H): fontconfig, which drawtext resolves font names through,

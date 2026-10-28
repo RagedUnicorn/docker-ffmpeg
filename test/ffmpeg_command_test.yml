@@ -100,6 +100,17 @@ commandTests:
       - 'rtmps'
     exitCode: 0
 
+  # configure autodetects both capture devices and drops them without an error
+  # when their headers are missing, which would break the webcam-stream and
+  # desktop-stream examples
+  - name: 'Check capture devices are present'
+    command: 'ffmpeg'
+    args: ['-devices']
+    expectedOutput:
+      - 'v4l2'
+      - 'x11grab'
+    exitCode: 0
+
   - name: 'Check filter support'
     command: 'ffmpeg'
     args: ['-filters']
