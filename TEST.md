@@ -310,7 +310,7 @@ The `test-all` service returns:
 
 When updating the Docker image:
 
-1. **FFmpeg version updates**: Usually no test changes needed
+1. **FFmpeg version updates**: The `ffmpeg version` / `ffprobe version` assertions in `test/ffmpeg_command_test.yml` are kept in sync with the Dockerfile `FFMPEG_VERSION` ARG by Renovate (same `FFmpeg/FFmpeg` dependency bumps everywhere together); bump them by hand on a manual update
 2. **Alpine version updates**: May require library version updates in tests; the Alpine version in `test/ffmpeg_metadata_test.yml` is kept in sync with the Dockerfile by Renovate (same `alpine` dependency bumps everywhere together)
 3. **New codec additions**: Add corresponding tests to verify functionality
 4. **Label changes**: Update metadata tests to match new labels
