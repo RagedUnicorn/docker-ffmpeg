@@ -27,7 +27,7 @@ jobs:
           cache-to: type=gha,mode=max
       - name: Run Container Structure Tests
         env:
-          FFMPEG_VERSION: test
+          FFMPEG_TEST_VERSION: test
         run: |
           echo "::notice title=🧪 Running Tests::Validating Docker image before release..."
           docker pull ragedunicorn/container-test:latest

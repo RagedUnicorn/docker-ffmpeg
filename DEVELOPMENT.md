@@ -92,30 +92,30 @@ docker build -t ragedunicorn/ffmpeg:test .
 
 ```bash
 # Run all tests against your local build
-FFMPEG_VERSION=test docker compose -f docker-compose.test.yml run test-all
+FFMPEG_TEST_VERSION=test docker compose -f docker-compose.test.yml run test-all
 
 # Run specific tests during development
-FFMPEG_VERSION=test docker compose -f docker-compose.test.yml up container-test-command
+FFMPEG_TEST_VERSION=test docker compose -f docker-compose.test.yml up container-test-command
 ```
 
 **Windows Command Prompt:**
 
 ```cmd
 # Run all tests against your local build
-set FFMPEG_VERSION=test && docker compose -f docker-compose.test.yml run test-all
+set FFMPEG_TEST_VERSION=test && docker compose -f docker-compose.test.yml run test-all
 
 # Run specific tests during development
-set FFMPEG_VERSION=test && docker compose -f docker-compose.test.yml up container-test-command
+set FFMPEG_TEST_VERSION=test && docker compose -f docker-compose.test.yml up container-test-command
 ```
 
 **Windows PowerShell:**
 
 ```powershell
 # Run all tests against your local build
-$env:FFMPEG_VERSION="test"; docker compose -f docker-compose.test.yml run test-all
+$env:FFMPEG_TEST_VERSION="test"; docker compose -f docker-compose.test.yml run test-all
 
 # Run specific tests during development
-$env:FFMPEG_VERSION="test"; docker compose -f docker-compose.test.yml up container-test-command
+$env:FFMPEG_TEST_VERSION="test"; docker compose -f docker-compose.test.yml up container-test-command
 ```
 
 **Important:** Never test against remote images - they may have different labels or configurations due to CI/CD overrides.

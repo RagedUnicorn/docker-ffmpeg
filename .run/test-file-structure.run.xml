@@ -10,7 +10,7 @@
               <option name="value" value="latest" />
             </DockerEnvVarImpl>
             <DockerEnvVarImpl>
-              <option name="name" value="FFMPEG_VERSION" />
+              <option name="name" value="FFMPEG_TEST_VERSION" />
               <option name="value" value="test" />
             </DockerEnvVarImpl>
           </list>
