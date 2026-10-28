@@ -26,13 +26,17 @@ Examples:
 
 ## Release Workflow
 
-When you push a tag, GitHub Actions automatically:
+When you push a tag, GitHub Actions runs `.github/workflows/docker_release.yml`, which:
 
-1. **Builds Docker images** (`.github/workflows/docker_release.yml`)
+1. **Tests the image** (`test` job)
+   - Runs the Container Structure Tests against a locally built image
+
+2. **Builds Docker images** (`build-and-push` job, after `test` passes)
    - Multi-platform: linux/amd64 and linux/arm64
    - Pushes to both GitHub Container Registry and Docker Hub
 
-2. **Creates GitHub Release** (`.github/workflows/github_release.yml`)
+3. **Creates GitHub Release** (`create-release` job, after `build-and-push` succeeds)
+   - Only created once the images are published, so a failed test or push never produces a release page
    - Generates changelog from commit history
    - Adds Docker pull commands
    - Links to the release
