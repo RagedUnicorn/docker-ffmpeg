@@ -55,6 +55,21 @@ docker pull ragedunicorn/ffmpeg:latest
 docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:latest -i input.mp4 output.mp4
 ```
 
+On Windows, use the PowerShell form:
+
+```powershell
+# Pull the image
+docker pull ragedunicorn/ffmpeg:latest
+
+# Run FFmpeg
+docker run -v "${PWD}:/tmp/workdir" ragedunicorn/ffmpeg:latest -i input.mp4 output.mp4
+```
+
+Write `${PWD}` **with braces** and keep the colon inside the quotes - without
+braces PowerShell parses `$PWD:` as a scope-qualified variable (as in
+`$env:PATH`) and rejects the argument. See the
+[Windows (PowerShell) notes](#windows-powershell-notes) for details.
+
 For development and building from source, see [DEVELOPMENT.md](DEVELOPMENT.md).
 
 ## Usage
@@ -72,6 +87,19 @@ docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:7.1.5 [ffmpeg-options]
 
 # Using exact version combination
 docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:7.1.5-alpine3.24.1-1 [ffmpeg-options]
+```
+
+PowerShell:
+
+```powershell
+# Using latest version
+docker run -v "${PWD}:/tmp/workdir" ragedunicorn/ffmpeg:latest [ffmpeg-options]
+
+# Using specific FFmpeg version (latest Alpine build)
+docker run -v "${PWD}:/tmp/workdir" ragedunicorn/ffmpeg:7.1.5 [ffmpeg-options]
+
+# Using exact version combination
+docker run -v "${PWD}:/tmp/workdir" ragedunicorn/ffmpeg:7.1.5-alpine3.24.1-1 [ffmpeg-options]
 ```
 
 ### Examples
@@ -116,6 +144,78 @@ docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:latest -i input.png -c:v l
 docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:latest -i input.mp4 -c:v libsvtav1 -preset 6 -crf 32 -c:a libopus output.mkv
 ```
 
+#### PowerShell
+
+The same examples in PowerShell form:
+
+```powershell
+# Convert video format
+docker run -v "${PWD}:/tmp/workdir" ragedunicorn/ffmpeg:latest -i input.mp4 -c:v libx264 -c:a aac output.mp4
+
+# Get video information
+docker run -v "${PWD}:/tmp/workdir" ragedunicorn/ffmpeg:latest -i input.mp4
+
+# Extract audio
+docker run -v "${PWD}:/tmp/workdir" ragedunicorn/ffmpeg:latest -i input.mp4 -vn -acodec mp3 output.mp3
+
+# Resize video
+docker run -v "${PWD}:/tmp/workdir" ragedunicorn/ffmpeg:latest -i input.mp4 -vf scale=1280:720 output.mp4
+
+# Convert to WebM
+docker run -v "${PWD}:/tmp/workdir" ragedunicorn/ffmpeg:latest -i input.mp4 -c:v libvpx -c:a libvorbis output.webm
+
+# Create GIF from video
+docker run -v "${PWD}:/tmp/workdir" ragedunicorn/ffmpeg:latest -i input.mp4 -vf "fps=10,scale=320:-1" output.gif
+
+# Convert image to AVIF
+docker run -v "${PWD}:/tmp/workdir" ragedunicorn/ffmpeg:latest -i input.png -c:v libaom-av1 -still-picture 1 output.avif
+
+# Encode AV1 video
+docker run -v "${PWD}:/tmp/workdir" ragedunicorn/ffmpeg:latest -i input.mp4 -c:v libsvtav1 -preset 6 -crf 32 -c:a libopus output.mkv
+```
+
+### Windows (PowerShell) notes
+
+The PowerShell variants above differ from the bash ones only in the mount,
+which is written `-v "${PWD}:/tmp/workdir"` instead of `-v $(pwd):/tmp/workdir`.
+The FFmpeg arguments themselves are unchanged.
+
+The mount spelling matters:
+
+- Pasting the bash form into PowerShell breaks: an argument that starts with
+  `$(pwd)` ends after the subexpression, so `$(pwd):/tmp/workdir` reaches
+  Docker as two arguments (`C:\path` and `:/tmp/workdir`).
+- `"$PWD:/tmp/workdir"` without braces is a parse error: PowerShell reads a
+  colon after a variable as a scope qualifier (as in `$env:PATH`), and `/` is
+  not a valid variable-name character.
+- `"${PWD}:/tmp/workdir"` works: the braces end the variable name at `PWD`,
+  the colon stays literal, and Docker splits the resulting
+  `C:\path:/tmp/workdir` on the second colon because it recognises the `C:`
+  drive prefix.
+
+Filter arguments such as `-vf "fps=10,scale=320:-1"` can keep their double
+quotes - they contain nothing PowerShell expands. Quote any filter string that
+contains `$` with single quotes instead, so PowerShell passes it through
+literally.
+
+To check what the container actually sees under `/tmp/workdir`, run a
+look-inside command:
+
+```powershell
+docker run --rm -v "${PWD}:/tmp/workdir" --entrypoint sh ragedunicorn/ffmpeg:latest -c 'pwd; ls -la /tmp/workdir'
+```
+
+The single quotes keep `pwd; ls -la /tmp/workdir` as one literal argument to
+the container's `sh`, so the `;` runs inside the container - unquoted,
+PowerShell would treat `;` as its own statement separator and run
+`ls -la /tmp/workdir` on the host.
+
+For more complex invocations where PowerShell keeps mangling arguments, the
+[stop-parsing token `--%`](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_parsing#the-stop-parsing-token)
+is an escape hatch: PowerShell passes everything after it verbatim. Nothing
+after `--%` is expanded - including `${PWD}` - so it cannot be combined with
+the mount examples above; none of the examples in this README need it.
+
 ## Docker Compose Usage
 
 This repository includes Docker Compose configurations for easier usage and common media processing workflows.
@@ -125,6 +225,11 @@ This repository includes Docker Compose configurations for easier usage and comm
 1. Create a `media` directory structure:
 ```bash
 mkdir -p media/input media/output
+```
+
+PowerShell:
+```powershell
+New-Item -ItemType Directory -Force media/input, media/output
 ```
 
 2. Place your input files in `media/input/`
@@ -183,6 +288,27 @@ docker compose -f examples/docker-compose.batch.yml run --rm batch-generate-thum
 
 # Custom batch processing
 FFMPEG_ARGS="-c:v libx265 -crf 28" docker compose -f examples/docker-compose.batch.yml run --rm batch-custom
+```
+
+#### PowerShell
+
+The compose commands without a `VAR=value` prefix run unchanged in PowerShell.
+PowerShell has no inline environment prefix, so set the variables in the
+session first (they stay set until you close the window or
+`Remove-Item Env:NAME`):
+
+```powershell
+# Extract specific segment
+$env:START_TIME = "00:01:30"; $env:DURATION = "00:00:45"
+docker compose -f examples/docker-compose.extract.yml run --rm extract-segment
+
+# Stream to RTMP server (set $env:STREAM_KEY beforehand, e.g. from a secret store)
+$env:RTMP_URL = "rtmp://your.server/live/"
+docker compose -f examples/docker-compose.stream.yml run --rm rtmp-stream
+
+# Custom batch processing
+$env:FFMPEG_ARGS = "-c:v libx265 -crf 28"
+docker compose -f examples/docker-compose.batch.yml run --rm batch-custom
 ```
 
 ### Environment Variables

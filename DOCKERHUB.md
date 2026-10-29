@@ -17,6 +17,15 @@ docker pull ragedunicorn/ffmpeg:7.1.5-alpine3.24.1-1
 docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:latest -i input.mp4 output.mp4
 ```
 
+On Windows, use the PowerShell form - `${PWD}` **with braces** and the colon
+inside the quotes (without braces PowerShell parses `$PWD:` as a
+scope-qualified variable, as in `$env:PATH`, and rejects the argument):
+
+```powershell
+# Run FFmpeg
+docker run -v "${PWD}:/tmp/workdir" ragedunicorn/ffmpeg:latest -i input.mp4 output.mp4
+```
+
 ## Features
 
 - 🚀 **Small footprint**: ~55MB compressed (~190MB on disk) runtime image
@@ -65,6 +74,33 @@ docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:latest \
 
 ```bash
 docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:latest \
+  -i input.mp4 -vf "fps=10,scale=320:-1" output.gif
+```
+
+### PowerShell
+
+The same examples on Windows - the backtick replaces `\` as the
+line-continuation character:
+
+```powershell
+# Convert video format
+docker run -v "${PWD}:/tmp/workdir" ragedunicorn/ffmpeg:latest `
+  -i input.mp4 -c:v libx264 -c:a aac output.mp4
+
+# Extract audio
+docker run -v "${PWD}:/tmp/workdir" ragedunicorn/ffmpeg:latest `
+  -i input.mp4 -vn -acodec mp3 output.mp3
+
+# Resize video
+docker run -v "${PWD}:/tmp/workdir" ragedunicorn/ffmpeg:latest `
+  -i input.mp4 -vf scale=1280:720 output.mp4
+
+# Convert image to AVIF
+docker run -v "${PWD}:/tmp/workdir" ragedunicorn/ffmpeg:latest `
+  -i input.png -c:v libaom-av1 -still-picture 1 output.avif
+
+# Create GIF from video
+docker run -v "${PWD}:/tmp/workdir" ragedunicorn/ffmpeg:latest `
   -i input.mp4 -vf "fps=10,scale=320:-1" output.gif
 ```
 
