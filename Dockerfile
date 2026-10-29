@@ -3,6 +3,7 @@
 ############################################
 FROM alpine:3.24.3 AS build
 
+# renovate: datasource=github-tags depName=FFmpeg/FFmpeg versioning=semver-coerced
 ARG FFMPEG_VERSION=7.1.5
 ARG FFMPEG_GPG_FINGERPRINT=FCF986EA15E6E293A5644F10B4322F04D67658D8
 ARG PREFIX=/opt/ffmpeg
