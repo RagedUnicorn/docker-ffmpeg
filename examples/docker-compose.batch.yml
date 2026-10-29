@@ -35,7 +35,7 @@ services:
           name=\"$${filename%.*}\";
           ext=\"$${filename##*.}\";
           echo \"Processing: $$filename\";
-          ffmpeg -i \"$$file\" -c:v libx264 -crf ${CRF} -preset ${PRESET} -c:a aac -b:a 128k \"output/$${name}_compressed.mp4\";
+          ffmpeg -i \"$$file\" -c:v libx264 -crf $${CRF} -preset $${PRESET} -c:a aac -b:a 128k \"output/$${name}_compressed.mp4\";
         fi
       done;
       echo 'Batch compression completed!'"
@@ -52,7 +52,7 @@ services:
         if [ -f \"$$file\" ]; then
           filename=$$(basename \"$$file\");
           name=\"$${filename%.*}\";
-          ffmpeg -i \"$$file\" -vf \"scale=${WIDTH}:${HEIGHT}:force_original_aspect_ratio=decrease,pad=${WIDTH}:${HEIGHT}:(ow-iw)/2:(oh-ih)/2\" -c:a copy \"output/$${name}_${HEIGHT}p.mp4\";
+          ffmpeg -i \"$$file\" -vf \"scale=$${WIDTH}:$${HEIGHT}:force_original_aspect_ratio=decrease,pad=$${WIDTH}:$${HEIGHT}:(ow-iw)/2:(oh-ih)/2\" -c:a copy \"output/$${name}_$${HEIGHT}p.mp4\";
         fi
       done"
 
@@ -68,7 +68,7 @@ services:
         if [ -f \"$$file\" ]; then
           filename=$$(basename \"$$file\");
           name=\"$${filename%.*}\";
-          ffmpeg -i \"$$file\" -vn -acodec lib${AUDIO_FORMAT}lame -ab ${AUDIO_BITRATE} \"output/$${name}.${AUDIO_FORMAT}\";
+          ffmpeg -i \"$$file\" -vn -acodec lib$${AUDIO_FORMAT}lame -ab $${AUDIO_BITRATE} \"output/$${name}.$${AUDIO_FORMAT}\";
         fi
       done"
 
@@ -84,7 +84,7 @@ services:
         if [ -f \"$$file\" ]; then
           filename=$$(basename \"$$file\");
           name=\"$${filename%.*}\";
-          ffmpeg -i \"$$file\" -ss ${THUMBNAIL_TIME} -vframes 1 -q:v 2 \"output/thumbnails/$${name}_thumb.jpg\";
+          ffmpeg -i \"$$file\" -ss $${THUMBNAIL_TIME} -vframes 1 -q:v 2 \"output/thumbnails/$${name}_thumb.jpg\";
         fi
       done"
 
@@ -100,7 +100,7 @@ services:
         if [ -f \"$$file\" ]; then
           filename=$$(basename \"$$file\");
           name=\"$${filename%.*}\";
-          ffmpeg -i \"$$file\" -quality ${QUALITY} \"output/$${name}.${OUTPUT_FORMAT}\";
+          ffmpeg -i \"$$file\" -quality $${QUALITY} \"output/$${name}.$${OUTPUT_FORMAT}\";
         fi
       done"
 
@@ -112,7 +112,7 @@ services:
       - WATERMARK=${WATERMARK:-input/watermark.png}
       - POSITION=${POSITION:-10:10}
     command: >
-      -c "if [ ! -f \"${WATERMARK}\" ]; then
+      -c "if [ ! -f \"$${WATERMARK}\" ]; then
         echo 'Error: Watermark file not found!';
         exit 1;
       fi;
@@ -120,7 +120,7 @@ services:
         if [ -f \"$$file\" ]; then
           filename=$$(basename \"$$file\");
           name=\"$${filename%.*}\";
-          ffmpeg -i \"$$file\" -i \"${WATERMARK}\" -filter_complex \"overlay=${POSITION}\" -c:a copy \"output/$${name}_watermarked.mp4\";
+          ffmpeg -i \"$$file\" -i \"$${WATERMARK}\" -filter_complex \"overlay=$${POSITION}\" -c:a copy \"output/$${name}_watermarked.mp4\";
         fi
       done"
 
@@ -136,7 +136,7 @@ services:
         if [ -f \"$$file\" ]; then
           filename=$$(basename \"$$file\");
           name=\"$${filename%.*}\";
-          ffmpeg -i \"$$file\" -ss ${START_TIME} -t ${PREVIEW_DURATION} -c copy \"output/$${name}_preview.mp4\";
+          ffmpeg -i \"$$file\" -ss $${START_TIME} -t $${PREVIEW_DURATION} -c copy \"output/$${name}_preview.mp4\";
         fi
       done"
 
@@ -163,13 +163,13 @@ services:
       - INPUT_PATTERN=${INPUT_PATTERN:-*.mp4}
       - OUTPUT_SUFFIX=${OUTPUT_SUFFIX:-_processed}
     command: >
-      -c "for file in input/${INPUT_PATTERN}; do
+      -c "for file in input/$${INPUT_PATTERN}; do
         if [ -f \"$$file\" ]; then
           filename=$$(basename \"$$file\");
           name=\"$${filename%.*}\";
           ext=\"$${filename##*.}\";
-          echo \"Processing: $$filename with args: ${FFMPEG_ARGS}\";
-          ffmpeg -i \"$$file\" ${FFMPEG_ARGS} \"output/$${name}${OUTPUT_SUFFIX}.$${ext}\";
+          echo \"Processing: $$filename with args: $${FFMPEG_ARGS}\";
+          ffmpeg -i \"$$file\" $${FFMPEG_ARGS} \"output/$${name}$${OUTPUT_SUFFIX}.$${ext}\";
         fi
       done"
 

@@ -27,9 +27,6 @@ services:
   rtmp-stream:
     extends:
       service: ffmpeg-stream-base
-    environment:
-      - RTMP_URL=${RTMP_URL:-rtmp://localhost/live/stream}
-      - STREAM_KEY=${STREAM_KEY:-}
     command: >
       -re
       -i input/video.mp4
@@ -42,7 +39,7 @@ services:
       -c:a aac
       -b:a 128k
       -f flv
-      ${RTMP_URL}${STREAM_KEY}
+      ${RTMP_URL:-rtmp://localhost/live/stream}${STREAM_KEY:-}
 
   # Create HLS stream for web playback
   hls-stream:
@@ -66,8 +63,6 @@ services:
   webcam-stream:
     extends:
       service: ffmpeg-stream-base
-    environment:
-      - RTMP_URL=${RTMP_URL:-rtmp://localhost/live/stream}
     command: >
       -f v4l2
       -framerate 30
@@ -80,7 +75,7 @@ services:
       -pix_fmt yuv420p
       -g 60
       -f flv
-      ${RTMP_URL}
+      ${RTMP_URL:-rtmp://localhost/live/stream}
 
   # Stream desktop (X11) to RTMP
   desktop-stream:
@@ -88,7 +83,6 @@ services:
       service: ffmpeg-stream-base
     environment:
       - DISPLAY=${DISPLAY:-:0}
-      - RTMP_URL=${RTMP_URL:-rtmp://localhost/live/stream}
     volumes:
       - ../media:/tmp/workdir
       - /tmp/.X11-unix:/tmp/.X11-unix:ro
@@ -96,7 +90,7 @@ services:
       -f x11grab
       -framerate 30
       -video_size ${SCREEN_SIZE:-1920x1080}
-      -i ${DISPLAY}+${OFFSET:-0,0}
+      -i ${DISPLAY:-:0}+${OFFSET:-0,0}
       -c:v libx264
       -preset veryfast
       -maxrate 3000k
@@ -104,27 +98,22 @@ services:
       -pix_fmt yuv420p
       -g 60
       -f flv
-      ${RTMP_URL}
+      ${RTMP_URL:-rtmp://localhost/live/stream}
 
   # Restream from one RTMP source to another
   rtmp-relay:
     extends:
       service: ffmpeg-stream-base
-    environment:
-      - SOURCE_RTMP=${SOURCE_RTMP:-rtmp://source.server/live/stream}
-      - DEST_RTMP=${DEST_RTMP:-rtmp://dest.server/live/stream}
     command: >
-      -i ${SOURCE_RTMP}
+      -i ${SOURCE_RTMP:-rtmp://source.server/live/stream}
       -c copy
       -f flv
-      ${DEST_RTMP}
+      ${DEST_RTMP:-rtmp://dest.server/live/stream}
 
   # Stream with custom overlay/watermark
   stream-with-overlay:
     extends:
       service: ffmpeg-stream-base
-    environment:
-      - RTMP_URL=${RTMP_URL:-rtmp://localhost/live/stream}
     command: >
       -re
       -i input/video.mp4
@@ -137,7 +126,7 @@ services:
       -c:a aac
       -b:a 128k
       -f flv
-      ${RTMP_URL}
+      ${RTMP_URL:-rtmp://localhost/live/stream}
 
   # Multi-bitrate streaming (adaptive streaming)
   adaptive-stream:
@@ -163,8 +152,6 @@ services:
   low-latency-stream:
     extends:
       service: ffmpeg-stream-base
-    environment:
-      - RTMP_URL=${RTMP_URL:-rtmp://localhost/live/stream}
     command: >
       -re
       -i input/video.mp4
@@ -179,4 +166,4 @@ services:
       -b:a 128k
       -f flv
       -flvflags no_duration_filesize
-      ${RTMP_URL}
+      ${RTMP_URL:-rtmp://localhost/live/stream}
