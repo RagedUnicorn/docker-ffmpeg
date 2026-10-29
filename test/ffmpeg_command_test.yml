@@ -153,11 +153,17 @@ commandTests:
       - '320,80'
     exitCode: 0
 
-  - name: 'Test simple conversion command'
-    setup: [['sh', '-c', 'echo "test" > /tmp/workdir/test.txt']]
+  # Listing an encoder does not prove it runs, so this is a real file-to-file
+  # conversion: encode an H.264/AAC MP4, then decode it and re-encode it to
+  # VP9/Opus WebM. The realtime VP9 settings keep the encode fast
+  - name: 'Convert an H.264/AAC MP4 to VP9/Opus WebM'
     command: 'sh'
-    args: ['-c', 'cd /tmp/workdir && ls']
-    expectedOutput: ['test.txt']
+    args:
+      - '-c'
+      - 'ffmpeg -y -loglevel error -f lavfi -i testsrc=size=320x240:rate=10 -f lavfi -i sine=frequency=440 -t 1 -c:v libx264 -c:a aac /tmp/workdir/input.mp4 && ffmpeg -y -loglevel error -i /tmp/workdir/input.mp4 -c:v libvpx-vp9 -deadline realtime -cpu-used 8 -c:a libopus /tmp/workdir/output.webm && ffprobe -v error -show_entries stream=codec_name -of csv=p=0 /tmp/workdir/output.webm'
+    expectedOutput:
+      - 'vp9'
+      - 'opus'
     exitCode: 0
 
   - name: 'Non-root user exists'
