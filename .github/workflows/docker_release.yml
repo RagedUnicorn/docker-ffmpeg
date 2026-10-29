@@ -39,20 +39,151 @@ jobs:
           
           echo "::notice title=✅ Tests Passed::All Container Structure Tests completed successfully!"
 
-  build-and-push:
+  # Build each platform natively on its own runner (FFmpeg is compiled from
+  # source, so building arm64 under QEMU is far too slow), smoke test the loaded
+  # image, and only then push it to GHCR by digest. No tag is written until the
+  # merge job has the digests of every platform
+  build:
     needs: test
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 60
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - platform: linux/amd64
+            runner: ubuntu-latest
+          - platform: linux/arm64
+            runner: ubuntu-24.04-arm
+    steps:
+      - name: Prepare
+        run: |
+          platform=${{ matrix.platform }}
+          echo "PLATFORM_PAIR=${platform//\//-}" >> "$GITHUB_ENV"
+          # Registry repository names must be lowercase; github.repository is not
+          echo "GHCR_IMAGE=${REGISTRY}/${IMAGE_NAME,,}" >> "$GITHUB_ENV"
+      - name: Checkout repository
+        uses: actions/checkout@v7
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v4
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      # Same tag rules as the merge job so the version label baked into each
+      # platform image matches the published tag
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v6
+        with:
+          images: ${{ env.GHCR_IMAGE }}
+          tags: |
+            type=semver,pattern={{version}}
+            type=match,pattern=v(\d+\.\d+\.\d+)-alpine.*,group=1,enable=${{ !contains(github.ref, '-rc') && !contains(github.ref, '-beta') && !contains(github.ref, '-alpha') }}
+            type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, '-rc') && !contains(github.ref, '-beta') && !contains(github.ref, '-alpha') }}
+      - name: Build image for smoke test
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          platforms: ${{ matrix.platform }}
+          load: true
+          tags: ragedunicorn/ffmpeg:smoke-${{ env.PLATFORM_PAIR }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: |
+            type=gha
+            type=gha,scope=release-${{ env.PLATFORM_PAIR }}
+          cache-to: type=gha,scope=release-${{ env.PLATFORM_PAIR }},mode=max
+          build-args: |
+            BUILD_DATE=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}
+            VERSION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
+      - name: Smoke test image
+        env:
+          IMAGE: ragedunicorn/ffmpeg:smoke-${{ env.PLATFORM_PAIR }}
+          PLATFORM: ${{ matrix.platform }}
+        run: |
+          echo "::notice title=🧪 Smoke Test::Running FFmpeg natively on ${PLATFORM}..."
+
+          echo "::group::Checking image platform"
+          ACTUAL=$(docker image inspect --format '{{.Os}}/{{.Architecture}}' "$IMAGE")
+          echo "image platform: $ACTUAL"
+          if [ "$ACTUAL" != "$PLATFORM" ]; then
+            echo "::error title=❌ Wrong Platform::Image built for ${PLATFORM} reports ${ACTUAL}"
+            exit 1
+          fi
+          echo "::endgroup::"
+
+          echo "::group::ffmpeg -version"
+          if ! docker run --rm "$IMAGE" -version; then
+            echo "::error title=❌ Smoke Test Failed::ffmpeg -version failed on ${PLATFORM}"
+            exit 1
+          fi
+          echo "::endgroup::"
+
+          echo "::group::Test encode (libx264 + libopus)"
+          if ! docker run --rm "$IMAGE" -hide_banner -nostdin \
+              -f lavfi -i testsrc=duration=1:size=128x72:rate=10 \
+              -f lavfi -i sine=frequency=440:duration=1 \
+              -c:v libx264 -c:a libopus -f null -; then
+            echo "::error title=❌ Smoke Test Failed::Test encode failed on ${PLATFORM}"
+            exit 1
+          fi
+          echo "::endgroup::"
+
+          echo "::notice title=✅ Smoke Test Passed::FFmpeg runs and encodes on ${PLATFORM}"
+      # Same inputs as the smoke-test build, so this is a cache hit that only
+      # exports and pushes the already-tested image
+      - name: Push image by digest
+        id: build
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          platforms: ${{ matrix.platform }}
+          labels: ${{ steps.meta.outputs.labels }}
+          outputs: type=image,"name=${{ env.GHCR_IMAGE }}",push-by-digest=true,name-canonical=true,push=true
+          cache-from: |
+            type=gha
+            type=gha,scope=release-${{ env.PLATFORM_PAIR }}
+          build-args: |
+            BUILD_DATE=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}
+            VERSION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
+      - name: Export digest
+        run: |
+          mkdir -p "${{ runner.temp }}/digests"
+          digest="${{ steps.build.outputs.digest }}"
+          touch "${{ runner.temp }}/digests/${digest#sha256:}"
+      - name: Upload digest
+        uses: actions/upload-artifact@v7
+        with:
+          name: digests-${{ env.PLATFORM_PAIR }}
+          path: ${{ runner.temp }}/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  # Combine the per-platform digests into one manifest list and tag it on both
+  # registries. The platform images only exist on GHCR (pushed by digest);
+  # imagetools create copies them to Docker Hub while writing the tags there
+  merge:
+    needs: build
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 15
     permissions:
       contents: read
       packages: write
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v7
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v4
+      - name: Prepare
+        run: |
+          echo "GHCR_IMAGE=${REGISTRY}/${IMAGE_NAME,,}" >> "$GITHUB_ENV"
+      - name: Download digests
+        uses: actions/download-artifact@v8
         with:
-          platforms: arm64
+          path: ${{ runner.temp }}/digests
+          pattern: digests-*
+          merge-multiple: true
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
       - name: Log in to GitHub Container Registry
@@ -71,7 +202,7 @@ jobs:
         uses: docker/metadata-action@v6
         with:
           images: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+            ${{ env.GHCR_IMAGE }}
             ${{ secrets.DOCKERHUB_USERNAME }}/ffmpeg
           tags: |
             # Strip 'v' prefix from git tag for Docker tag
@@ -80,22 +211,29 @@ jobs:
             type=match,pattern=v(\d+\.\d+\.\d+)-alpine.*,group=1,enable=${{ !contains(github.ref, '-rc') && !contains(github.ref, '-beta') && !contains(github.ref, '-alpha') }}
             # 'latest' tag for version tags (skipped for prereleases)
             type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, '-rc') && !contains(github.ref, '-beta') && !contains(github.ref, '-alpha') }}
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v7
-        with:
-          context: .
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          build-args: |
-            BUILD_DATE=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}
-            VERSION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
+      - name: Create manifest list and push
+        working-directory: ${{ runner.temp }}/digests
+        run: |
+          echo "::group::Creating multi-platform manifest list"
+          # Word splitting is intended: one -t flag per tag, one source per digest
+          # shellcheck disable=SC2046
+          docker buildx imagetools create \
+            $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
+            $(printf "${GHCR_IMAGE}@sha256:%s " *)
+          echo "::endgroup::"
+      - name: Inspect image
+        env:
+          VERSION: ${{ steps.meta.outputs.version }}
+          DOCKERHUB_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/ffmpeg
+        run: |
+          for image in "$GHCR_IMAGE" "$DOCKERHUB_IMAGE"; do
+            echo "::group::${image}:${VERSION}"
+            docker buildx imagetools inspect "${image}:${VERSION}"
+            echo "::endgroup::"
+          done
 
   create-release:
-    needs: build-and-push
+    needs: merge
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
