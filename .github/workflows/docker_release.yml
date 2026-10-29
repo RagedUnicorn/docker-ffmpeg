@@ -151,6 +151,9 @@ jobs:
           build-args: |
             BUILD_DATE=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}
             VERSION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
+          # Attestation manifests are carried into the manifest list by the merge job
+          sbom: true
+          provenance: mode=max
       - name: Export digest
         run: |
           mkdir -p "${{ runner.temp }}/digests"
@@ -174,10 +177,14 @@ jobs:
     permissions:
       contents: read
       packages: write
+      # Required for cosign keyless signing (GitHub OIDC token for Fulcio)
+      id-token: write
     steps:
       - name: Prepare
         run: |
           echo "GHCR_IMAGE=${REGISTRY}/${IMAGE_NAME,,}" >> "$GITHUB_ENV"
+      - name: Install cosign
+        uses: sigstore/cosign-installer@v4
       - name: Download digests
         uses: actions/download-artifact@v8
         with:
@@ -229,6 +236,19 @@ jobs:
           for image in "$GHCR_IMAGE" "$DOCKERHUB_IMAGE"; do
             echo "::group::${image}:${VERSION}"
             docker buildx imagetools inspect "${image}:${VERSION}"
+            echo "::endgroup::"
+          done
+      - name: Sign images with cosign
+        env:
+          VERSION: ${{ steps.meta.outputs.version }}
+          DOCKERHUB_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/ffmpeg
+        run: |
+          # imagetools create writes the same manifest list to both registries,
+          # so one digest identifies it on GHCR and Docker Hub
+          DIGEST=$(docker buildx imagetools inspect "${GHCR_IMAGE}:${VERSION}" --format '{{ json .Manifest }}' | jq -r .digest)
+          for image in "$GHCR_IMAGE" "$DOCKERHUB_IMAGE"; do
+            echo "::group::Signing ${image}@${DIGEST}"
+            cosign sign --yes "${image}@${DIGEST}"
             echo "::endgroup::"
           done
 

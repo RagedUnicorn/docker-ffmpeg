@@ -34,6 +34,8 @@ When you push a tag, GitHub Actions runs `.github/workflows/docker_release.yml`,
 2. **Builds Docker images** (`build-and-push` job, after `test` passes)
    - Multi-platform: linux/amd64 and linux/arm64
    - Pushes to both GitHub Container Registry and Docker Hub
+   - Attaches SBOM and provenance (`mode=max`) attestations
+   - Signs the pushed digest in both registries with cosign keyless signing (GitHub OIDC)
 
 3. **Creates GitHub Release** (`create-release` job, after `build-and-push` succeeds)
    - Only created once the images are published, so a failed test or push never produces a release page
