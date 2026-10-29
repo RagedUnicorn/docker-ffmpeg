@@ -205,7 +205,7 @@ Many compose services support environment variables for customization:
 
 2. **Multiple Files**: Use the batch processing configurations for processing multiple files efficiently
 
-3. **Persistent Settings**: The repository includes a `.env` file with default settings. You can modify it to set your preferred versions:
+3. **Persistent Settings**: The repository includes a `.env` file that sets `FFMPEG_VERSION` (plus the test harness version). Docker Compose reads it automatically, so change the version there and add any of the variables above you want to persist:
    ```env
    FFMPEG_VERSION=7.1.5-alpine3.24.1-1
    RTMP_URL=rtmp://streaming.server/live/

@@ -162,9 +162,10 @@ When manually updating versions:
 2. Update the `org.opencontainers.image.base.name` label in the Dockerfile to the same Alpine version
 3. Update the Alpine version asserted in `test/ffmpeg_metadata_test.yml` to match
 4. Update `ARG FFMPEG_VERSION=X.X.X` in the Dockerfile
-5. Test the build thoroughly - library versions may have changed
-6. Update library versions in `test/ffmpeg_test.yml` if needed
-7. Update version numbers in documentation
+5. Update the `ffmpeg version X.X.X` / `ffprobe version X.X.X` assertions in `test/ffmpeg_command_test.yml` to match
+6. Test the build thoroughly - library versions may have changed
+7. Update library versions in `test/ffmpeg_test.yml` if needed
+8. Update version numbers in documentation
 
 ### Adding New Codecs
 

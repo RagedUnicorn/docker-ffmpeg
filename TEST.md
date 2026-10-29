@@ -45,7 +45,7 @@ Validates:
 - OCI-compliant labels are present and correct
 - Container entrypoint and default command
 - Working directory configuration
-- User context (runs as root)
+- User context (runs as the non-root `ffmpeg` user)
 
 ## Running Tests
 
