@@ -7,6 +7,11 @@
 #
 # Place your input files in ./media/input/
 # For live streaming, ensure you have proper network configuration
+#
+# Note: network_mode: host and the device/X11 passthrough used by
+# webcam-stream and desktop-stream only work on Linux hosts. On Docker
+# Desktop (Windows/macOS), remove network_mode: host from the base service
+# and point RTMP_URL at host.docker.internal instead of localhost.
 
 services:
   # Base service configuration with host networking for streaming
@@ -19,9 +24,6 @@ services:
     tty: true
     # Use host networking for better streaming performance
     network_mode: host
-    # Add device access for webcam streaming
-    devices:
-      - /dev/video0:/dev/video0
 
   # Stream to RTMP server (e.g., YouTube, Twitch)
   rtmp-stream:
@@ -63,6 +65,9 @@ services:
   webcam-stream:
     extends:
       service: ffmpeg-stream-base
+    # Add device access for webcam streaming (requires a webcam at /dev/video0)
+    devices:
+      - /dev/video0:/dev/video0
     command: >
       -f v4l2
       -framerate 30
