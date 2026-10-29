@@ -120,7 +120,8 @@ services:
       service: ffmpeg-base
     command: >
       -i input/video.mp4
-      -map_channel 0.1.${CHANNEL:-0}
+      -map 0:a:0
+      -af "pan=mono|c0=c${CHANNEL:-0}"
       -c:a pcm_s16le
       output/channel_${CHANNEL:-0}.wav
 
