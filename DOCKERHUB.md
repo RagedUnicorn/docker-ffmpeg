@@ -10,8 +10,8 @@ A lightweight FFmpeg build on Alpine Linux with extensive codec support for vers
 # Pull latest version
 docker pull ragedunicorn/ffmpeg:latest
 
-# Or pull specific version
-docker pull ragedunicorn/ffmpeg:7.1.5-alpine3.24.1-1
+# Or pull specific version (see the Tags tab for the available versions)
+docker pull ragedunicorn/ffmpeg:<ffmpeg-version>-alpine<alpine-version>-<build>
 
 # Run FFmpeg
 docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:latest -i input.mp4 output.mp4
@@ -29,7 +29,7 @@ docker run -v "${PWD}:/tmp/workdir" ragedunicorn/ffmpeg:latest -i input.mp4 outp
 ## Features
 
 - 🚀 **Small footprint**: ~55MB compressed (~190MB on disk) runtime image
-- 📦 **FFmpeg 7.1.5**: Latest stable version compiled from source
+- 📦 **FFmpeg**: Latest stable version compiled from source
 - 🎥 **Extensive codec support**: H.264, H.265/HEVC, VP8/VP9, AV1, MP3, AAC, Opus, and more
 - 🏗️ **Multi-platform**: Supports linux/amd64 and linux/arm64
 - 🔧 **Optimized build**: Multi-stage Docker build for minimal size
@@ -112,10 +112,16 @@ This image uses semantic versioning that includes all component versions:
 
 ### Version Examples
 
-- `7.1.1-alpine3.22.0-1` - Initial release with FFmpeg 7.1.1 and Alpine 3.22.0
-- `7.1.1-alpine3.22.0-2` - Rebuild of same versions (bug fixes, security patches)
-- `7.1.1-alpine3.22.1-1` - Alpine Linux patch update
-- `7.1.2-alpine3.22.0-1` - FFmpeg version update
+`X.Y.Z` is the FFmpeg version, `A.B.C` the Alpine version:
+
+- `X.Y.Z-alpineA.B.C-1` - FFmpeg X.Y.Z on Alpine A.B.C, first build
+- `X.Y.Z-alpineA.B.C-2` - Rebuild of same versions (bug fixes, security patches)
+- `X.Y.Z-alpineA.B.D-1` - Alpine Linux patch update
+- `X.Y+1.0-alpineA.B.C-1` - FFmpeg version update (build resets to 1)
+- `X.Y.Z` - Most recent build of FFmpeg X.Y.Z
+- `latest` - Most recent stable release
+
+The available versions are listed in the [Tags tab](https://hub.docker.com/r/ragedunicorn/ffmpeg/tags).
 
 When updates are available through automated dependency management, new releases are created with appropriate version tags.
 

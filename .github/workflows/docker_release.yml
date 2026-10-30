@@ -212,9 +212,9 @@ jobs:
             ${{ env.GHCR_IMAGE }}
             ${{ secrets.DOCKERHUB_USERNAME }}/ffmpeg
           tags: |
-            # Strip 'v' prefix from git tag for Docker tag
+            # Strip 'v' prefix from git tag for Docker tag (e.g. X.Y.Z-alpineA.B.C-N)
             type=semver,pattern={{version}}
-            # Also create FFmpeg version tag (e.g. 7.1.5)
+            # Also create FFmpeg version tag (e.g. X.Y.Z)
             type=match,pattern=v(\d+\.\d+\.\d+)-alpine.*,group=1,enable=${{ !contains(github.ref, '-rc') && !contains(github.ref, '-beta') && !contains(github.ref, '-alpha') }}
             # 'latest' tag for version tags (skipped for prereleases)
             type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, '-rc') && !contains(github.ref, '-beta') && !contains(github.ref, '-alpha') }}

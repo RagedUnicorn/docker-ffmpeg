@@ -174,21 +174,21 @@ When testing different versions, always build locally first:
 
 ```bash
 # Build a specific version locally
-docker build -t ragedunicorn/ffmpeg:7.1.5-alpine3.24.1-1 .
+docker build -t ragedunicorn/ffmpeg:<ffmpeg-version>-alpine<alpine-version>-<build> .
 ```
 
 **Linux/macOS:**
 
 ```bash
 # Test that specific version
-FFMPEG_TEST_VERSION=7.1.5-alpine3.24.1-1 docker compose -f docker-compose.test.yml run test-all
+FFMPEG_TEST_VERSION=<ffmpeg-version>-alpine<alpine-version>-<build> docker compose -f docker-compose.test.yml run test-all
 ```
 
 **Windows (PowerShell):**
 
 ```powershell
 # Test that specific version
-$env:FFMPEG_TEST_VERSION="7.1.5-alpine3.24.1-1"; docker compose -f docker-compose.test.yml run test-all
+$env:FFMPEG_TEST_VERSION="<ffmpeg-version>-alpine<alpine-version>-<build>"; docker compose -f docker-compose.test.yml run test-all
 ```
 
 ## Troubleshooting Test Failures

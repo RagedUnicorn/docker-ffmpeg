@@ -17,7 +17,7 @@ This Docker image provides a lightweight FFmpeg installation built from source o
 ## Features
 
 - **Small footprint**: ~55MB compressed (~190MB on disk) runtime image using Alpine Linux
-- **FFmpeg 7.1.5**: Latest stable version compiled from source
+- **FFmpeg**: Latest stable version compiled from source
 - **Extensive codec support**: x264, x265, VP9, AV1, Opus, MP3, AAC, and more
 - **Multi-stage build**: Optimized for minimal final image size
 - **Volume mounting**: Easy file input/output through `/tmp/workdir`
@@ -83,10 +83,10 @@ The container uses FFmpeg as the entrypoint, so any FFmpeg parameters can be pas
 docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:latest [ffmpeg-options]
 
 # Using specific FFmpeg version (latest Alpine build)
-docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:7.1.5 [ffmpeg-options]
+docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:<ffmpeg-version> [ffmpeg-options]
 
 # Using exact version combination
-docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:7.1.5-alpine3.24.1-1 [ffmpeg-options]
+docker run -v $(pwd):/tmp/workdir ragedunicorn/ffmpeg:<ffmpeg-version>-alpine<alpine-version>-<build> [ffmpeg-options]
 ```
 
 PowerShell:
@@ -96,11 +96,14 @@ PowerShell:
 docker run -v "${PWD}:/tmp/workdir" ragedunicorn/ffmpeg:latest [ffmpeg-options]
 
 # Using specific FFmpeg version (latest Alpine build)
-docker run -v "${PWD}:/tmp/workdir" ragedunicorn/ffmpeg:7.1.5 [ffmpeg-options]
+docker run -v "${PWD}:/tmp/workdir" ragedunicorn/ffmpeg:<ffmpeg-version> [ffmpeg-options]
 
 # Using exact version combination
-docker run -v "${PWD}:/tmp/workdir" ragedunicorn/ffmpeg:7.1.5-alpine3.24.1-1 [ffmpeg-options]
+docker run -v "${PWD}:/tmp/workdir" ragedunicorn/ffmpeg:<ffmpeg-version>-alpine<alpine-version>-<build> [ffmpeg-options]
 ```
+
+Available tags are listed on [Docker Hub](https://hub.docker.com/r/ragedunicorn/ffmpeg/tags) and in the
+[GitHub releases](https://github.com/RagedUnicorn/docker-ffmpeg/releases).
 
 ### Examples
 
@@ -333,7 +336,7 @@ Many compose services support environment variables for customization:
 
 3. **Persistent Settings**: The repository includes a `.env` file that sets `FFMPEG_VERSION` (plus the test harness version). Docker Compose reads it automatically, so change the version there and add any of the variables above you want to persist:
    ```env
-   FFMPEG_VERSION=7.1.5-alpine3.24.1-1
+   FFMPEG_VERSION=<ffmpeg-version>-alpine<alpine-version>-<build>
    RTMP_URL=rtmp://streaming.server/live/
    ```
 
@@ -343,9 +346,12 @@ This project uses semantic versioning that matches the Docker image contents:
 
 **Format:** `{ffmpeg_version}-alpine{alpine_version}-{build_number}`
 
-Examples:
-- `7.1.5-alpine3.24.1-1` - FFmpeg 7.1.5 on Alpine 3.24.1, build 1
+Examples (`X.Y.Z` is the FFmpeg version, `A.B.C` the Alpine version):
+- `X.Y.Z-alpineA.B.C-1` - FFmpeg X.Y.Z on Alpine A.B.C, build 1
+- `X.Y.Z` - Most recent build of FFmpeg X.Y.Z
 - `latest` - Most recent stable release
+
+The current tags are listed on [Docker Hub](https://hub.docker.com/r/ragedunicorn/ffmpeg/tags).
 
 For detailed release process and versioning guidelines, see [RELEASE.md](RELEASE.md).
 

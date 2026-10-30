@@ -64,18 +64,26 @@ The development mode:
 # Basic build
 docker build -t ragedunicorn/ffmpeg:dev .
 
-# Build with specific versions
+# Build with version metadata (FFmpeg and Alpine come from the Dockerfile)
 docker build \
-  --build-arg FFMPEG_VERSION=7.1.5 \
   --build-arg BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ') \
-  --build-arg VERSION=7.1.5-alpine3.24.1-1 \
-  -t ragedunicorn/ffmpeg:7.1.5-alpine3.24.1-1 .
+  --build-arg VERSION=dev \
+  -t ragedunicorn/ffmpeg:dev .
+
+# Build a different FFmpeg version than the Dockerfile default
+docker build \
+  --build-arg FFMPEG_VERSION=<ffmpeg-version> \
+  -t ragedunicorn/ffmpeg:dev .
 
 # Multi-platform build (requires buildx)
 docker buildx build \
   --platform linux/amd64,linux/arm64 \
   -t ragedunicorn/ffmpeg:dev .
 ```
+
+The FFmpeg version is the `FFMPEG_VERSION` default in the `Dockerfile`
+and the Alpine version is in its `FROM` lines. Renovate keeps both current, so the
+docs do not repeat them.
 
 ### 3. Testing Your Changes
 
@@ -146,14 +154,15 @@ When Renovate creates a PR:
 3. Test the build locally if it's a major version update
 4. Merge the PR if everything looks good
 
-Manual version updates are rarely needed, but if required:
+Manual version updates are rarely needed, but if required (see the `Dockerfile`
+for the current values):
 
 ```dockerfile
 # FFmpeg version
-ARG FFMPEG_VERSION=7.1.5
+ARG FFMPEG_VERSION=<ffmpeg-version>
 
 # Alpine base image
-FROM alpine:3.24.1
+FROM alpine:<alpine-version>
 ```
 
 When manually updating versions:
@@ -165,7 +174,7 @@ When manually updating versions:
 5. Update the `ffmpeg version X.X.X` / `ffprobe version X.X.X` assertions in `test/ffmpeg_command_test.yml` to match
 6. Test the build thoroughly - library versions may have changed
 7. Update library versions in `test/ffmpeg_test.yml` if needed
-8. Update version numbers in documentation
+8. No documentation update is needed - the docs carry no concrete versions
 
 ### Adding New Codecs
 
