@@ -184,7 +184,7 @@ jobs:
         run: |
           echo "GHCR_IMAGE=${REGISTRY}/${IMAGE_NAME,,}" >> "$GITHUB_ENV"
       - name: Install cosign
-        uses: sigstore/cosign-installer@v4
+        uses: sigstore/cosign-installer@v4.1.2
       - name: Download digests
         uses: actions/download-artifact@v8
         with:
