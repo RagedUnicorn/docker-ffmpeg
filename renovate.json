@@ -29,6 +29,5 @@
       "datasourceTemplate": "github-tags"
     }
   ],
-  "commitMessagePrefix": "chore(deps):",
   "prConcurrentLimit": 2
 }
