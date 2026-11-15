@@ -98,7 +98,6 @@ RUN cd /tmp/ffmpeg-${FFMPEG_VERSION} && \
     --enable-libharfbuzz \
     --enable-libfontconfig \
     --enable-librtmp \
-    --enable-postproc \
     --enable-openssl \
     --disable-debug \
     --disable-doc \
