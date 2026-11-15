@@ -1,7 +1,7 @@
 ############################################
 # FFmpeg build stage
 ############################################
-FROM alpine:3.24.3 AS build
+FROM alpine:3.24.4 AS build
 
 # renovate: datasource=github-tags depName=FFmpeg/FFmpeg versioning=semver-coerced
 ARG FFMPEG_VERSION=7.1.5
@@ -117,7 +117,7 @@ RUN cd ${PREFIX}/bin && \
 ############################################
 # Runtime stage
 ############################################
-FROM alpine:3.24.3
+FROM alpine:3.24.4
 
 ARG PREFIX=/opt/ffmpeg
 ARG BUILD_DATE
@@ -134,7 +134,7 @@ LABEL org.opencontainers.image.title="FFmpeg on Alpine Linux" \
       org.opencontainers.image.licenses="GPL-3.0-or-later" \
       org.opencontainers.image.version="${VERSION}" \
       org.opencontainers.image.created="${BUILD_DATE}" \
-      org.opencontainers.image.base.name="docker.io/library/alpine:3.24.3"
+      org.opencontainers.image.base.name="docker.io/library/alpine:3.24.4"
 
 # Install runtime dependencies only. libxcb is the only X11 package the x11grab
 # device needs: it ships libxcb plus the shm, shape and xfixes extensions
